@@ -1,0 +1,11 @@
+.*\.pyc
+.*\.DS_Store
+.*\.ropeproject/*
+text_values/
+pickle/
+
+.DS_Store
+config.py
+out.log
+*.pyc
+invoice/pdf/temp

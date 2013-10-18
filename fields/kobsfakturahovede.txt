@@ -1,0 +1,45 @@
+FLeverandørNr
+Nummer
+KreditorNr
+Navn
+Navn 2
+Adresse
+Adresse 2
+PostNr+By
+Attention
+D/V Ref.
+Lev.Nr
+Lev.Navn
+Lev.Navn2
+Lev.Adr.1
+Lev.Adr.2
+Lev.Adr.3
+Lev.Att.
+OrdreDato
+Bogf.Dato
+Lev.Dato
+Post.Tekst
+BetalingsBet.Kode
+ForfaldsDato
+Kont.Rabat%
+Kont.RabatDato
+LeveringsKode
+LokationsKode
+AfdelingsKode
+ProjektKode
+Bogf.Gr
+ValutaKode
+ValutaKurs
+Fak.RabatKode
+SprogKode
+MomsPligtig
+IndkøberKode
+Evt.OrdreNr
+Udskrevet
+Afvent
+UdlignArt
+UdlignNr
+ModKonto
+SagsNr
+KreditorFakturaNr
+MomsNr

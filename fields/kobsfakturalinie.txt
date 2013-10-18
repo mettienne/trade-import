@@ -1,0 +1,36 @@
+LeverandørNr
+BilagsNr
+LøbeNr
+Art
+Nummer
+LokationsKode
+Bogf.Gr
+Lev.Dato
+Tekst
+Tekst 2
+Enhed
+Antal
+Apris 
+KostPris 
+MomsKode
+Moms%
+MængdeRabat%
+Rabat%
+RabatBeløb
+NettoBeløb
+BruttoBeløb
+SalgsPris 
+Beregn Fak.Rabat
+BruttoVægt
+NettoVægt
+Antal pr. Kolli
+Rumfang
+UdlignLøbeNr
+AfdelingsKode
+ProjektKode
+SagsNr
+HovedAktivitet
+UnderAktivitet
+DelAktivitet
+SerieNr
+Omkostnings%

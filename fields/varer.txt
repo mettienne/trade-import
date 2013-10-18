@@ -1,0 +1,135 @@
+Nummer
+Nummer 2
+Navn
+SøgeNavn
+Navn 2
+StykListe
+Klasse
+Enhed
+PrisFaktor
+Bogf.Gr
+Plac.4
+SalgsMængdeRabatKode
+VareDeb.RabatGr
+Beregn Fak.Rabat
+StatistikGr
+ProvisionsGr
+SalgsPris
+AvanceBeregning
+Avance%
+LagerAfgang
+KostPris
+KostBeregning
+KøbsPris(fast)
+KøbsPris(sidste) 
+KøbsPris(gns.) 
+NettoNetto 
+Omkostnings%
+I.MomsKode
+U.MomsKode
+LeverandørKode
+Lev.VareNr
+LeveringsTid
+Min.Beholdning
+Max.Beholdning
+OrdreKvantum
+Alt.VareNr
+Vejl.Pris 
+AfgiftsDel
+AfgiftsKode
+BruttoVægt
+NettoVægt
+Antal pr. Kolli
+Rumfang
+Holdbarhed
+FragtForm
+ToldPosition
+ToldFaktor
+KøbsLand
+Budget(antal)
+Budget(beløb)
+Budget(DB)
+Bemærkning
+Spærret
+Rettet d.
+DatoAfgrænsning
+AfdelingsAfgrænsning
+ProjektAfgrænsning
+LokationsAfgrænsning
+Beholdning
+VærdiBeholdning
+Bevægelse
+Køb(antal)
+Salg(antal)
+Tilgang(antal)
+Afgang(antal)
+Køb(DKK)
+Salg(DKK)
+Tilgang(DKK)
+Afgang(DKK)
+Forbrug(DKK)
+Forv.Tilgang(antal)
+Forv.Afgang(antal)
+SalgsPris Inkl.Moms
+Tilhører VareGr.Nr
+SalgsPris1
+SalgsPris2
+YderColli
+InderColli
+Antal
+Antal1
+Antal2
+Stregkode
+Stregkode inder
+Stregkode yder
+Stregkode ds
+Plac.3
+VareKode
+Aktiv
+PrisGruppering
+Vægt
+Embal.afg.
+Plac.2
+Plac.1
+Marker
+Minus katalog
+Valutapris
+Valuta
+Grossistpris
+Grossistpris2
+Ds Nr.
+Stregkodefejl
+ny
+Udsolgt
+Yder Rumfang
+Udlæses
+IN/KA
+R1
+Lås pris
+Vare gruppe
+Vare rettet af
+Udsolgt d.
+Midl.streg
+Ds afvist
+Skal findes
+Stregkode slettet
+EUR pris
+Plac.gammel
+Ny plac.
+PP.U
+X-tra min.
+X-tra max.
+X-tra ord.
+Imerco  opret
+Coop hjemmeside
+På plads
+Opfyldning
+Dagrofa opret
+Kina    opret
+Coop    opret
+Pisi oprettet
+PP.antal
+PP.I
+Edco1
+Edco2
+Edco3

@@ -1,0 +1,44 @@
+KundeNr
+BilagsNr
+LøbeNr
+Art
+Nummer
+LokationsKode
+Bogf.Gr
+MængdeRabatKode
+Lev.Dato
+Tekst
+Tekst 2
+Enhed
+Antal
+Apris 
+KostPris
+MomsKode
+Moms%
+MængdeRabat%
+Rabat%
+RabatBeløb
+NettoBeløb
+BruttoBeløb
+Beregn Fak.Rabat
+BruttoVægt
+NettoVægt
+Antal pr. Kolli
+Rumfang
+UdlignLøbeNr
+AfdelingsKode
+ProjektKode
+PrisGruppeNr
+Beregn M.Rabat
+SagsNr
+SagsPostLøbeNr
+HovedAktivitet
+UnderAktivitet
+DelAktivitet
+SagsUdligningsID
+UdlignSagEksakt
+ArbejdsTypeKode
+SerieNr
+Deb.VareRabat%
+Ean nr.
+Lev.lager

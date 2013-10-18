@@ -1,0 +1,48 @@
+KundeNr
+Nummer
+DebitorNr
+Navn
+Navn 2
+Adresse
+Adresse 2
+PostNr+By
+Attention
+D/V Ref.
+Lev.Nr
+Lev.Navn
+Lev.Navn2
+Lev.Adr.1
+Lev.Adr.2
+Lev.Adr.3
+Lev.Att.
+Bogf.Dato
+Lev.Dato
+Post.Tekst
+LokationsKode
+AfdelingsKode
+ProjektKode
+Bogf.Gr
+ValutaKode
+ValutaKurs
+PrisGruppeNr
+BruttoPriser
+Beregn M.Rabat
+Fak.RabatKode
+Deb.VareRabatGr
+SprogKode
+MomsPligtig
+SælgerKode
+Udskrevet
+Afvent
+UdlignArt
+UdlignNr
+ModKonto
+SagsNr
+MomsNr
+EDI
+EDI overført
+EDI ovf. dato
+Upload nr.
+Krn ordredato
+Kundeordrenr.
+EAN

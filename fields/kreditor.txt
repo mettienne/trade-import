@@ -1,0 +1,65 @@
+Nummer
+Navn
+SøgeNavn
+Navn 2
+Adresse
+Adresse 2
+PostNr+By
+Attention
+Telefon
+Telex
+GiroNr
+Bank
+BankKonto
+Vor Konto
+Distrikt
+AfdelingsKode
+ProjektKode
+Budget
+Bogf.Gr
+ValutaKode
+SprogKode
+MomsPligtig
+StatistikGr
+BetalingsBet.Kode
+RenteKode
+IndkøberKode
+LeveringsKode
+Speditør
+Fak.RabatKode
+LandeKode
+Bemærkning
+Spærret
+Faktureres fra
+Prioritet
+BetalingsForm
+Rettet d.
+DatoAfgrænsning
+AfdelingsAfgrænsning
+ProjektAfgrænsning
+Saldo
+Saldo(DKK)
+Bevægelse
+Bevægelse(DKK)
+Køb(DKK)
+FakturaRabat(DKK)
+KontantRabat(DKK)
+Forfaldne Beløb
+Forfaldne Beløb(DKK)
+Indbetalt
+Faktureret
+KreditNotaBeløb
+Renter
+Indbetalt(DKK)
+Faktureret(DKK)
+KreditNotaBeløb(DKK)
+Renter(DKK)
+RestOrdreBeløb
+Lev.EjFak.Beløb
+UdligningsMetode
+Telefax
+TelexAnswerBack
+MomsNr
+Fax
+Ny
+Udlæses
