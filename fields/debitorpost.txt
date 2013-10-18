@@ -1,10 +1,7 @@
-Kartotek     21 DebitorPost                     1784 08-01-08 11.51.27 PCC4.03
-KrK1DebitorPost
-
 LøbeNr
 KontoNr
 Dato
-Art) BetalingFakturaKreditnotaRentebilag
+Art
 BilagsNr
 Tekst
 ValutaKode
@@ -24,7 +21,7 @@ SælgerKode
 BrugerID
 Spor
 Afvent
-UdlignArt) BetalingFakturaKreditnotaRentebilag
+UdlignArt
 UdlignNr
 Åben
 ForfaldsDato
