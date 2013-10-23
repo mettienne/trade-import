@@ -1,0 +1,97 @@
+Nummer
+Navn
+SøgeNavn
+Navn 2
+Adresse
+Adresse 2
+PostNr+By
+Attention
+Telefon
+Telex
+GiroNr
+Bank
+BankKonto
+Vor Konto
+Distrikt
+AfdelingsKode
+ProjektKode
+Kæde
+Budget
+KreditMax
+Bogf.Gr
+ValutaKode
+PrisGruppeNr
+SprogKode
+MomsPligtigStatistikGr
+BetalingsBet.Kode
+RenteKode
+SælgerKode
+LeveringsKode
+Speditør
+UdpassageSted
+Fak.RabatKode-
+Deb.VareRabatGr
+LandeKode
+OpkrævningsKode
+Forbrug
+BemærkningaI
+Spærret
+FakturaKopier
+Antal Udtog
+KontoUdtog
+Rykker
+RenteNota
+Faktureres til
+Prioritet
+BetalingsForm
+Rettet d.
+DatoAfgrænsning
+AfdelingsAfgrænsning
+ProjektAfgrænsning
+Saldo
+Saldo(DKK)
+Bevægelse
+Bevægelse(DKK)
+Salg(DKK)
+DB(DKK)
+FakturaRabat(DKK)
+KontantRabat(DKK)
+Forfaldne Beløb
+Forfaldne Beløb(DKK)
+Indbetalt
+Faktureret
+KreditNotaBeløb
+Renter
+Indbetalt(DKK)
+Faktureret(DKK)
+KreditNotaBeløb(DKK)
+Renter(DKK)
+RestOrdreBeløb
+Lev.EjFak.Beløb
+UdligningsMetodeÅbenPostSaldo
+Beregn M.RabatBruttoPriser
+LokationsKode
+Telefax
+TelexAnswerBack
+MomsNr
+SamleFakturering
+Fax
+UdskrivToldPos
+Send katalog
+Ny
+Udlæses
+Ingen pris på flg.
+Lev.Navn
+Lev.adr
+Lev.adr2
+Lev.adr3
+Lev.att
+Butiksnr.
+EDI Nr.
+Betaling edi
+Lev.lager
+DS lev.
+Afd.nr
+PP
+Ekstra pris
+Pisi Indmeldt
