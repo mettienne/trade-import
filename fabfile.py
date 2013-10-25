@@ -4,7 +4,7 @@ from fabric.colors import yellow as _yellow
 import os.path
 import inspect
 
-def prep():
+def prepare():
     test()
     commit()
 
