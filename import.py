@@ -88,25 +88,21 @@ if __name__ == '__main__':
     parser.add_argument(
             '-c', '--config', type=str, nargs="*",
             help="List of configuration files to import (python modules)")
+    parser.add_argument('method',
+            help="all, invoices or the like")
     cmd_args = parser.parse_args()
+
 
     configure(cmd_args.config or [])
     conn = MongoClient(config.uri)
     db = conn.invoice
     parser = parsing.Parser()
 
-
-    #if len(sys.argv) == 2:
-        #possibles = globals().copy()
-        #possibles.update(locals())
-        #method = possibles.get(sys.argv[1])
-        #if not method:
-            #raise Exception("Method %s not implemented" % method)
-        #method(*sys.argv[2:])
-    #elif len(sys.argv) == 1:
-        #pass
-
-    #else:
-        #raise Exception("Method %s not implemented" % method)
+    possibles = globals().copy()
+    possibles.update(locals())
+    method = possibles.get(cmd_args.method)
+    if not method:
+        raise Exception("Method %s not implemented" % method)
+    method()
 
 

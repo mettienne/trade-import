@@ -12,7 +12,6 @@ item_file = 'vare.txt'
 sales_invoice_line = 'salgsfakturalinie.txt'
 sales_invoice_head = 'salgsfakturahovede.txt'
 uri = "mongodb://localhost/invoice"
-n_threads = 4
 
 home_dir = os.path.expanduser("~")
 home_config = os.path.join(home_dir, ".trade_tools.config.py")
