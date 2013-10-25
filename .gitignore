@@ -1,6 +1,7 @@
 .*\.pyc
 .*\.DS_Store
 .*\.ropeproject/*
+*.log
 text_values/
 pickle/
 
@@ -9,3 +10,4 @@ config.py
 out.log
 *.pyc
 invoice/pdf/temp
+.coverage

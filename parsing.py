@@ -1,4 +1,7 @@
 import logging
+from datetime import datetime
+import os
+import config
 logger = logging.getLogger(__name__)
 
 class MalformedException(Exception):
@@ -7,7 +10,7 @@ class MalformedException(Exception):
 
 class Parser():
 
-    def get_price(self, string):
+    def get_price(self, string, key=''):
         if not string:
             return 0
         multiplier = 1
@@ -23,18 +26,22 @@ class Parser():
 
         return price
 
-
-    def get_city(self, string, key):
+    def get_city(self, string, key, log=True):
         res = [x for x in string.split() if x]
         if not res:
-            logger.warning('city_zip: empty')
-            return '', '' 
+            if log:
+                logger.warning('city_zip: empty, {}'.format(key))
+            return '', ''
         if res[0].isdigit():
             return (res[0], ' '.join(res[1:]))
         else:
-            logger.warning('city_zip: {}, {}'.format(key, string.encode('utf8')))
+            if log:
+                logger.warning('city_zip: invalid format, {}, {}'.format(key, string.encode('utf8')))
             return '', string
 
+    def parse_file(self, filename):
+        f = open(os.path.join(config.path, filename), 'r')
+        return unicode(f.read(), 'CP850').split('\r\n')[:-1]
 
     def get_lines(self, f):
         l = []
@@ -48,8 +55,29 @@ class Parser():
             else:
                 if line[-1] != ':':
                     raise Exception('Line not properly ended')
-                l.append(unicode(line[:-1].strip(), 'CP850'))
+                l.append(line[:-1])
 
         if last_line != '::':
+            print last_line
             raise Exception('File not properly ended')
+
+    def get_qty(self, string, key):
+        qty = 0
+        try:
+            qty = int(string.replace('.', ''))
+        except Exception as e:
+            logger.warning('quantity: invalid format, {}, {}'.format(key, string.encode('utf8')))
+
+        if qty < 0:
+            logger.warning('negative quantity: {}, {}'.format(key, string.encode('utf8')))
+
+        return qty
+
+    def get_date(self, string, key, log=True):
+        try:
+            return datetime.strptime(string, '%d-%m-%y')
+        except:
+            if log:
+                logger.warning('date invalid: {}, {}'.format(key, string.encode('utf8')))
+            return ''
 
