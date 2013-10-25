@@ -89,11 +89,12 @@ if __name__ == '__main__':
             '-c', '--config', type=str, nargs="*",
             help="List of configuration files to import (python modules)")
     cmd_args = parser.parse_args()
+
+    configure(cmd_args.config or [])
     conn = MongoClient(config.uri)
     db = conn.invoice
     parser = parsing.Parser()
 
-    configure(cmd_args.config or [])
 
     #if len(sys.argv) == 2:
         #possibles = globals().copy()
