@@ -19,7 +19,9 @@ def commit():
 #def bootstrap():
     #require('root',
 
-
+def push():
+    print(_yellow('>>> starting {}'.format(_fn())))
+    local('git push origin master')
 
 
 def production():
@@ -38,6 +40,7 @@ def setup():
     setup_virtualenv()
 
 def deploy():
+    push()
     pull()
     install_requirements()
 
