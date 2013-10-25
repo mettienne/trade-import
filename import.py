@@ -15,9 +15,6 @@ import config
 import argparse
 
 logger = logging.getLogger(__name__)
-conn = MongoClient(config.uri)
-db = conn.invoice
-parser = parsing.Parser()
 
 g_lines = {}
 def all():
@@ -92,6 +89,9 @@ if __name__ == '__main__':
             '-c', '--config', type=str, nargs="*",
             help="List of configuration files to import (python modules)")
     cmd_args = parser.parse_args()
+    conn = MongoClient(config.uri)
+    db = conn.invoice
+    parser = parsing.Parser()
 
     configure(cmd_args.config or [])
 
