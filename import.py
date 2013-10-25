@@ -12,6 +12,7 @@ import parsing
 import navi_mappings as nm
 import logging
 import config
+import argparse
 
 logger = logging.getLogger(__name__)
 conn = MongoClient(config.uri)
@@ -31,7 +32,7 @@ def import_collection(element, collection, filename, city_zip=False):
             logger.info('progress file {}: {}'.format(filename, i))
 
         obj = element.format(line, city_zip)
-        collection.update({ '_id': obj.pop('_id') }, 
+        collection.update({ '_id': obj.pop('_id') },
                 { '$set': obj }, upsert=True)
 
 
@@ -40,7 +41,7 @@ def invoices():
 
 def import_inv_cred(lines_name, heads_filename, element, collection):
     parsed_lines = parser.parse_file(lines_name)
-    result = {} 
+    result = {}
 
     line_element = nm.SalesInvCredLine()
     lines = parser.get_lines(parsed_lines)
@@ -63,21 +64,48 @@ def insert_creditnotas(parsed_heads, d_lines, element, collection):
         obj = element.format(line, True)
         _id = obj.pop('_id')
         obj[nm.lines] = d_lines.get(_id, [])
-        collection.update({ '_id': _id }, 
+        collection.update({ '_id': _id },
                 { '$set': obj }, upsert=True)
 
-if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        possibles = globals().copy()
-        possibles.update(locals())
-        method = possibles.get(sys.argv[1])
-        if not method:
-            raise Exception("Method %s not implemented" % method)
-        method(*sys.argv[2:])
-    elif len(sys.argv) == 1:
-        pass
+def configure(config_files):
 
-    else:
-        raise Exception("Method %s not implemented" % method)
+    def load_config_file(config_file):
+        print "Loading", config_file
+        cfg = {}
+        execfile(config_file, {}, cfg)
+        for key, value in cfg.items():
+            if not hasattr(config, key):
+                raise Exception("Unknown config variable in {}:"
+                                " {}".format(config_file, key))
+            setattr(config, key, value)
+
+    if os.path.exists(config.home_config):
+        load_config_file(config.home_config)
+
+    for config_file in config_files:
+        load_config_file(config_file)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Admin Server Help')
+    parser.add_argument(
+            '-c', '--config', type=str, nargs="*",
+            help="List of configuration files to import (python modules)")
+    cmd_args = parser.parse_args()
+
+    configure(cmd_args.config or [])
+
+    #if len(sys.argv) == 2:
+        #possibles = globals().copy()
+        #possibles.update(locals())
+        #method = possibles.get(sys.argv[1])
+        #if not method:
+            #raise Exception("Method %s not implemented" % method)
+        #method(*sys.argv[2:])
+    #elif len(sys.argv) == 1:
+        #pass
+
+    #else:
+        #raise Exception("Method %s not implemented" % method)
 
 
