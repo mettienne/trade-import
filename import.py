@@ -10,8 +10,11 @@ import argparse
 import subprocess
 import time
 import signal
+import setproctitle
 from multiprocessing import Process, Pipe
 from datetime import datetime, timedelta
+import sys
+
 logging.basicConfig(level=config.log_level)
 logger = logging.getLogger(__name__)
 
@@ -86,9 +89,12 @@ def configure(config_files):
 def connect():
 
     def signal_handler(signal, frame):
+        print 'ssh thread cought exit'
         process.terminate()
 
+
     signal.signal(signal.SIGTERM, signal_handler)
+    setproctitle.setproctitle('ssh thread')
     logger.info('connecting')
     process = subprocess.Popen(['ssh', '-o', 'ConnectTimeout={}'.format(config.ssh_timeout),
         '-N', '-L', '27018:localhost:22282', config.mongoSSH],
@@ -113,6 +119,9 @@ if __name__ == '__main__':
 
     def signal_handler(signal, frame):
         process.terminate()
+        print 'main thread cought exit'
+        sys.exit('exiting')
+
     signal.signal(signal.SIGTERM, signal_handler)
 
     logger.info('checking if ssh thread timed out')
