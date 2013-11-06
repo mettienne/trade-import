@@ -113,13 +113,14 @@ class Item(NaviObject):
         self.inner_box = (76, parser.get_qty)
         self.outer_box = (77, parser.get_qty)
         self.quantity = (77, parser.get_qty)
+        self.ean = (81, string)
         self.group = (108, string)
 
 class SalesInvCredLine(NaviObject):
 
     def __init__(self):
         self._id = (1, string)
-        self.inv_cred_line_key = (4, string)
+        self.item_number = (4, string)
         self.info = (9, string)
         self.quantity = (12, string)
         self.price = (13, parser.get_price)

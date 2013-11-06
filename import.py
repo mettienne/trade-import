@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-import sys
-import os
-#import simplejson as json
-from datetime import datetime
 from  pymongo import MongoClient
 from bson.objectid import ObjectId
 import cPickle as pickle
@@ -13,10 +7,16 @@ import navi_mappings as nm
 import logging
 import config
 import argparse
+import subprocess
+import time
+import signal
+from multiprocessing import Process, Pipe
+from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
-g_lines = {}
+connected = False
+
 def all():
     import_collection(nm.Deptor(), db.deptors, config.deptor_file, True)
     import_collection(nm.Creditor(), db.creditors, config.creditor_file, True)
@@ -82,27 +82,71 @@ def configure(config_files):
     for config_file in config_files:
         load_config_file(config_file)
 
+def connect():
+
+    def signal_handler(signal, frame):
+        process.terminate()
+
+    signal.signal(signal.SIGTERM, signal_handler)
+    logger.info('connecting')
+    process = subprocess.Popen(['ssh', '-o', 'ConnectTimeout={}'.format(config.ssh_timeout),
+        '-N', '-L', '27018:localhost:22282', config.mongoSSH],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output,stderr = process.communicate()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Admin Server Help')
     parser.add_argument(
             '-c', '--config', type=str, nargs="*",
             help="List of configuration files to import (python modules)")
-    parser.add_argument('method',
+    parser.add_argument('-m', '--method',
             help="all, invoices or the like")
     cmd_args = parser.parse_args()
 
 
     configure(cmd_args.config or [])
-    conn = MongoClient(config.uri)
-    db = conn.invoice
-    parser = parsing.Parser()
 
-    possibles = globals().copy()
-    possibles.update(locals())
-    method = possibles.get(cmd_args.method)
-    if not method:
-        raise Exception("Method %s not implemented" % method)
-    method()
+    process = Process(target=connect)
+    process.start()
+
+    logger.info('checking if ssh thread timed out')
+    time.sleep(config.ssh_timeout + 1)
+
+    if not process.is_alive():
+        logger.error('SSH connection failed')
+
+    conn = None
+    try:
+        conn = MongoClient(config.uri)
+        db = conn.invoice
+        parser = parsing.Parser()
+
+        if cmd_args.method:
+            possibles = globals().copy()
+            possibles.update(locals())
+            method = possibles.get(cmd_args.method)
+            method()
+        else:
+            last_run = None
+            while True:
+                now = datetime.now()
+                #run once every hour and only in specified minute interval
+                if now.minute > 30 and now.minute < 45 and (not last_run or now - last_run > timedelta(minutes=30)):
+                    last_run = now
+                    logger.info('Starting sync')
+                    all()
+
+                time.sleep(10)
+                logger.info('Sleeping: {}'.format(now))
+
+
+
+    except Exception as ex:
+        process.terminate()
+        if conn:
+            conn.close()
+
+    process.terminate()
 
 

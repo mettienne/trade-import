@@ -11,7 +11,7 @@ Tekst
 Tekst 2
 Enhed
 Antal
-Apris 
+Apris
 KostPris
 MomsKode
 Moms%
