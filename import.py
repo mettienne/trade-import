@@ -12,7 +12,7 @@ import time
 import signal
 from multiprocessing import Process, Pipe
 from datetime import datetime, timedelta
-
+logging.basicConfig(level=config.log_level)
 logger = logging.getLogger(__name__)
 
 connected = False
@@ -21,6 +21,7 @@ def all():
     import_collection(nm.Deptor(), db.deptors, config.deptor_file, True)
     import_collection(nm.Creditor(), db.creditors, config.creditor_file, True)
     import_collection(nm.Item(), db.items, config.item_file)
+    invoices()
 
 def import_collection(element, collection, filename, city_zip=False):
     split = parser.parse_file(filename)

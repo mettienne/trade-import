@@ -2,10 +2,9 @@ import logging
 import os.path
 import sys
 module = sys.modules[__name__]
-#logging.basicConfig(level=logging.WARNING, filename='import.log', filemode='w')
-logging.basicConfig(level=logging.INFO)
 #logging.basicConfig(level=logging.WARNING)
 
+log_level = logging.INFO
 ### IMPORTING
 path = 'text_values'
 deptor_file = 'debitor.txt'
@@ -18,7 +17,7 @@ sales_invoice_head = 'salgsfakturahovede.txt'
 uri = "mongodb://localhost:27017/invoice"
 
 mongoSSH = "ettienne@ettienne.webfactional.com"
-ssh_timeout = 3
+ssh_timeout = 5
 
 ### AMQP
 amqp_host = 'localhost'

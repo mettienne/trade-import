@@ -4,27 +4,12 @@ from fabric.colors import yellow as _yellow
 import os.path
 import inspect
 
-def prepare():
-    test()
-    commit()
-
 def test():
     print(_yellow('>>> starting {}'.format(_fn())))
     local('py.test -sx --cov-report term-missing --cov .')
 
-def commit():
-    print(_yellow('>>> starting {}'.format(_fn())))
-    local('git pull')
-    local('git add -p && git commit')
-#def bootstrap():
-    #require('root',
 
-def push():
-    print(_yellow('>>> starting {}'.format(_fn())))
-    local('git push origin master')
-
-
-def production():
+def prod():
 
     env.user = 'nelly'
     env.app_name = 'trade-tools'
@@ -40,7 +25,6 @@ def setup():
     setup_virtualenv()
 
 def deploy():
-    push()
     pull()
     install_requirements()
 
@@ -85,7 +69,7 @@ def install_requirements():
     Install the required packages using pip.
     """
     print(_yellow('>>> starting {}'.format(_fn())))
-    virtualenv('pip install -q -r {}/requirements.txt'.format(env.app_path))
+    virtualenv('pip install -q --upgrade -r {}/requirements.txt'.format(env.app_path))
 
 def _fn():
     """
