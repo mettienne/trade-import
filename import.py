@@ -111,6 +111,10 @@ if __name__ == '__main__':
     process = Process(target=connect)
     process.start()
 
+    def signal_handler(signal, frame):
+        process.terminate()
+    signal.signal(signal.SIGTERM, signal_handler)
+
     logger.info('checking if ssh thread timed out')
     time.sleep(config.ssh_timeout + 1)
 

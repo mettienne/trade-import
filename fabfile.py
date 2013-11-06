@@ -32,6 +32,7 @@ def deploy():
 def clone():
     print(_yellow('>>> starting {}'.format(_fn())))
     with cd(env.apps_path):
+        run('git checkout . ')
         run('git clone -q --depth 1 {} {}'.format(env.git_clone, env.app_name))
 
 def pull():
