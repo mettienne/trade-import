@@ -1,10 +1,12 @@
+import logging_config
+logging_config.configure()
+import logging
 from  pymongo import MongoClient
 from bson.objectid import ObjectId
 import cPickle as pickle
 import os.path
 import parsing
 import navi_mappings as nm
-import logging
 import config
 import argparse
 import subprocess
@@ -15,7 +17,6 @@ from multiprocessing import Process, Pipe
 from datetime import datetime, timedelta
 import sys
 
-logging.basicConfig(level=config.log_level)
 logger = logging.getLogger(__name__)
 
 connected = False

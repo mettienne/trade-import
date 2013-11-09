@@ -1,10 +1,9 @@
 import logging
 import os.path
 import sys
+import logging_config
 module = sys.modules[__name__]
-#logging.basicConfig(level=logging.WARNING)
 
-log_level = logging.INFO
 ### IMPORTING
 path = 'text_values'
 deptor_file = 'debitor.txt'
@@ -25,6 +24,8 @@ amqp_host = 'localhost'
 ### GLOBAL SETTINGS
 home_dir = os.path.expanduser("~")
 home_config = os.path.join(home_dir, ".trade_tools.config.py")
+
+log_dir = 'log'
 
 
 ### TRADEHOUSE SETTINGS

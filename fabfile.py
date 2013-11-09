@@ -3,6 +3,7 @@ from fabric.context_managers import cd, prefix
 from fabric.colors import yellow as _yellow
 import os.path
 import inspect
+import config
 
 def test():
     print(_yellow('>>> starting {}'.format(_fn())))
@@ -49,6 +50,7 @@ def clean():
 def mkdirs():
     print(_yellow('>>> starting {}'.format(_fn())))
     run('mkdir -p {}'.format(env.app_path))
+    run('mkdir -p {}'.format(os.path.join(env.app_path, config.log_dir)))
 
 def setup_virtualenv():
     """
@@ -67,12 +69,21 @@ def virtualenv(command):
     with prefix('source {}/bin/activate'.format(env.venv_path)):
         run(command)
 
+def status():
+    """
+    Show pm2 status
+    """
+    print(_yellow('>>> starting {}'.format(_fn())))
+    with cd(env.app_path):
+        run('pm2 list'.format(env.venv_path))
+
 def start():
     """
     Start the script using pm2
     """
     print(_yellow('>>> starting {}'.format(_fn())))
-    run('pm2 start import.py -x --interpreter {}/bin/python'.format(env.venv_path))
+    with cd(env.app_path):
+        run('pm2 start import.py -x --interpreter {}/bin/python'.format(env.venv_path))
 
 def install_requirements():
     """
