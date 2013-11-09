@@ -77,13 +77,13 @@ class OIOXML():
         if elem['customer_order_number'].strip():
             kundeordrenummer = elem['customer_order_number']
         else:
-            raise Exception('Kundeordrenummer mangler på faktura {}'.format(elem['_id']))
+            raise Exception('Kundeordrenummer mangler på faktura {}'.format(elem['key']))
         if not edi in self.ean_list:
-            raise Exception('Kunde ean-nummer matcher ikke DanskSupermarked på faktura {}'.format(elem['_id']))
+            raise Exception('Kunde ean-nummer matcher ikke DanskSupermarked på faktura {}'.format(elem['key']))
 
 
         header = etree.fromstring(self.template.encode('utf-8'))
-        header.find('ID').text = str(elem['_id'])
+        header.find('ID').text = str(elem['key'])
         header.find('IssueDate').text = elem['posting_date'].split('T')[0]
         pie_type = 'PIETEST'
         if config.env == 'prod':

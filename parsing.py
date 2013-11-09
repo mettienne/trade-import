@@ -10,6 +10,11 @@ class MalformedException(Exception):
 
 class Parser():
 
+    def get_email(self, string, key=''):
+        email = string.replace('$', '@')
+        if email and not '@' in email:
+            logger.warning('invalid email, {}'.format(key))
+
     def get_price(self, string, key=''):
         if not string:
             return 0

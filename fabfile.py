@@ -25,20 +25,21 @@ def setup():
     setup_virtualenv()
 
 def deploy():
-    #pull()
-    clone()
+    pull()
+    #clone()
     install_requirements()
+    start()
 
 
 def clone():
     print(_yellow('>>> starting {}'.format(_fn())))
     with cd(env.app_path):
-        run('git checkout . ')
         run('git clone -q --depth 1 {} {}'.format(env.git_clone, env.app_name))
 
 def pull():
     print(_yellow('>>> starting {}'.format(_fn())))
     with cd(env.app_path):
+        run('git checkout . ')
         run('git pull origin master')
 
 def clean():
@@ -65,6 +66,13 @@ def virtualenv(command):
     print(_yellow('>>> starting {}'.format(_fn())))
     with prefix('source {}/bin/activate'.format(env.venv_path)):
         run(command)
+
+def start():
+    """
+    Start the script using pm2
+    """
+    print(_yellow('>>> starting {}'.format(_fn())))
+    run('pm2 start import.py -x --interpreter {}/bin/python'.format(env.venv_path))
 
 def install_requirements():
     """

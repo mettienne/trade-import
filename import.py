@@ -21,10 +21,16 @@ logger = logging.getLogger(__name__)
 connected = False
 
 def all():
+    import_collection(nm.Item(), db.items, config.item_file)
+    contacts()
+    invoices()
+
+def invoices():
+    import_inv_cred(config.sales_invoice_line, config.sales_invoice_head, nm.SalesInvoice(), db.salesinvoices)
+
+def contacts():
     import_collection(nm.Deptor(), db.deptors, config.deptor_file, True)
     import_collection(nm.Creditor(), db.creditors, config.creditor_file, True)
-    import_collection(nm.Item(), db.items, config.item_file)
-    invoices()
 
 def import_collection(element, collection, filename, city_zip=False):
     split = parser.parse_file(filename)
@@ -33,12 +39,10 @@ def import_collection(element, collection, filename, city_zip=False):
             logger.info('progress file {}: {}'.format(filename, i))
 
         obj = element.format(line, city_zip)
-        collection.update({ '_id': obj.pop('_id') },
+        collection.update({ 'key': obj.pop('key') },
                 { '$set': obj }, upsert=True)
 
 
-def invoices():
-    import_inv_cred(config.sales_invoice_line, config.sales_invoice_head, nm.SalesInvoice(), db.salesinvoices)
 
 def import_inv_cred(lines_name, heads_filename, element, collection):
     parsed_lines = parser.parse_file(lines_name)
@@ -51,7 +55,7 @@ def import_inv_cred(lines_name, heads_filename, element, collection):
             logger.info('processed lines: {}'.format(i))
 
         obj = line_element.format(l, False)
-        result.setdefault(obj.pop('_id'), []).append(obj)
+        result.setdefault(obj.pop('key'), []).append(obj)
 
     parsed_heads = parser.parse_file(heads_filename)
     insert_creditnotas(parsed_heads, result, element, collection)
@@ -63,9 +67,9 @@ def insert_creditnotas(parsed_heads, d_lines, element, collection):
             logger.info('progress file {}: {}'.format('inv/cred', i))
 
         obj = element.format(line, True)
-        _id = obj.pop('_id')
-        obj[nm.lines] = d_lines.get(_id, [])
-        collection.update({ '_id': _id },
+        key = obj.pop('key')
+        obj[nm.lines] = d_lines.get(key, [])
+        collection.update({ 'key': key },
                 { '$set': obj }, upsert=True)
 
 def configure(config_files):
@@ -157,6 +161,7 @@ if __name__ == '__main__':
 
 
     except Exception as ex:
+        logger.exception(ex)
         process.terminate()
         if conn:
             conn.close()
