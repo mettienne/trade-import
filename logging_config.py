@@ -8,9 +8,9 @@ import logging.config
 import os
 
 
-def configure():
-    file_err = os.path.join(config.log_dir, "err.log")
-    file_debug = os.path.join(config.log_dir, "debug.log")
+def configure(app_id=''):
+    file_err = os.path.join(config.log_dir, "{}_err.log".format(app_id))
+    file_debug = os.path.join(config.log_dir, "{}_debug.log".format(app_id))
 
     logging.raiseExceptions = False
 
@@ -41,6 +41,9 @@ def configure():
                 'handlers': ['error_log_file', 'debug_log_file'],
                 'propagate': False,
                 'level': 'DEBUG',
+            },
+            'pika': {
+                'level': 'ERROR'
             },
         }
     })

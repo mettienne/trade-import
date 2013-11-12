@@ -11,6 +11,7 @@ creditor_file = 'kreditor.txt'
 item_file = 'vare.txt'
 sales_invoice_line = 'salgsfakturalinie.txt'
 sales_invoice_head = 'salgsfakturahovede.txt'
+cust_order_numbers = 'kundeordrenumre.txt'
 
 ### DATABASE
 uri = "mongodb://localhost:27017/invoice"
@@ -20,12 +21,14 @@ ssh_timeout = 5
 
 ### AMQP
 amqp_host = 'localhost'
+amqp_user = 'guest'
+amqp_password = 'guest'
 
 ### GLOBAL SETTINGS
 home_dir = os.path.expanduser("~")
 home_config = os.path.join(home_dir, ".trade_tools.config.py")
 
-log_dir = 'log'
+log_dir = '/apps/log'
 
 
 ### TRADEHOUSE SETTINGS
@@ -38,6 +41,13 @@ data_path = 'data'
 
 env = 'test' # or prod
 
+### DS FTP
+#server = '217.10.25.76'
+#user = 'TradeHouseDenmark'
+#password = 'xX!mc6Z1'
+ftp_server = 'ettienne.webfactional.com'
+ftp_user = 'navigator'
+ftp_password = ''
 
 
 def configure(config_files):

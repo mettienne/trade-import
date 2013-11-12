@@ -83,7 +83,7 @@ class SalesInvCredLine(NaviObject):
         self.key = (1, string)
         self.item_number = (4, string)
         self.info = (9, string)
-        self.quantity = (12, string)
+        self.quantity = (12, parser.get_qty)
         self.price = (13, parser.get_price)
         self.total_without_tax = (20, parser.get_price)
         self.total_with_tax = (21, parser.get_price)

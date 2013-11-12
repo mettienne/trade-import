@@ -84,10 +84,16 @@ class OIOXML():
 
         header = etree.fromstring(self.template.encode('utf-8'))
         header.find('ID').text = str(elem['key'])
-        header.find('IssueDate').text = elem['posting_date'].split('T')[0]
-        pie_type = 'PIETEST'
-        if config.env == 'prod':
-            header.find('TypeCode').text = 'PIE'
+        posting_date = elem['posting_date']
+        if type(posting_date) is str or type(posting_date) is unicode:
+            header.find('IssueDate').text = posting_date.split('T')[0]
+        else:
+            header.find('IssueDate').text = posting_date.isoformat().split('T')[0]
+        #if config.env == 'prod':
+            #header.find('TypeCode').text = 'PIE'
+        #else:
+            #header.find('TypeCode').text = 'PIETEST'
+
 
         #if fak.type == 'faktura':
             #header.find('TypeCode').text = 'PIETEST'
@@ -133,4 +139,6 @@ class OIOXML():
 
         temp = tempfile.TemporaryFile()
         temp.write(etree.tostring(header, encoding='utf-8'))
+        temp.seek(0)
+
         return temp

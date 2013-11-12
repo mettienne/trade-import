@@ -14,6 +14,7 @@ class Parser():
         email = string.replace('$', '@')
         if email and not '@' in email:
             logger.warning('invalid email, {}'.format(key))
+        return email
 
     def get_price(self, string, key=''):
         if not string:

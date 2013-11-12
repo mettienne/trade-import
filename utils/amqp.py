@@ -5,9 +5,12 @@ logger = logging.getLogger(__name__)
 
 class BlockingAMQP():
 
-    def __init__(self, on_message=None, host='localhost'):
-
-        params = pika.connection.ConnectionParameters(host=host)
+    def __init__(self, on_message=None, host='localhost', 
+            user='guest', password='guest'):
+        credentials = pika.PlainCredentials(user, password)
+        params = pika.connection.ConnectionParameters(
+                host=host,
+                credentials=credentials)
         self.connection = pika.BlockingConnection(
                 parameters=params)
 
