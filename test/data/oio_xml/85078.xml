@@ -1,0 +1,49 @@
+<Invoice>
+	<ID>85078</ID>
+	<IssueDate>2013-05-05</IssueDate>
+	<TypeCode>PIE</TypeCode>
+	<InvoiceCurrencyCode>DKK</InvoiceCurrencyCode>
+	<BuyersReferenceID schemeID="EAN">5790000090426
+</BuyersReferenceID>
+	<ReferencedOrder>
+		<BuyersOrderID>3547582</BuyersOrderID>
+		<IssueDate />
+	</ReferencedOrder>
+	<BuyerParty>
+		<ID schemeID="EAN">5790000090426
+</ID>
+	</BuyerParty>
+	<SellerParty>
+		<ID schemeID="EAN">9000026704561</ID>
+	</SellerParty>
+	<TaxTotal>
+		<CategoryTotal>
+			<RateCategoryCodeID>VAT</RateCategoryCodeID>
+			<RatePercentNumeric>25</RatePercentNumeric>
+			<TaxAmounts>
+				<TaxableAmount>1496.00</TaxableAmount>
+				<TaxAmount>374.00</TaxAmount>
+			</TaxAmounts>
+		</CategoryTotal>
+	</TaxTotal>
+	<LegalTotals>
+		<LineExtensionTotalAmount>1496.00</LineExtensionTotalAmount>
+		<ToBePaidTotalAmount>1870.00</ToBePaidTotalAmount>
+	</LegalTotals>
+<InvoiceLine>
+            <ID>1</ID>
+            <InvoicedQuantity unitCode="PCE" unitCodeListAgencyID="UN/UOM">176</InvoicedQuantity>
+            <LineExtensionAmount>1496.00</LineExtensionAmount>
+            <Item>
+                <ID schemeID="EAN-13">5707283700003</ID>
+                <Description>Neglelak</Description>
+                <Tax>
+                    <RateCategoryCodeID>VAT</RateCategoryCodeID>
+                    <TypeCode>VAT</TypeCode>
+                    <RatePercentNumeric>25</RatePercentNumeric>
+                </Tax>
+            </Item>
+            <BasePrice>
+                <PriceAmount>8.50</PriceAmount>
+            </BasePrice>
+        </InvoiceLine></Invoice>
