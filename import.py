@@ -184,7 +184,7 @@ if __name__ == '__main__':
 
     configure(cmd_args.config or [])
 
-    daemon = Importer('/Users/mikko/src/trade-tools/test.pid')
+    daemon = Importer(os.path.join(config.pid_dir, 'test.pid'))
     if cmd_args.action == 'start':
         daemon.start()
     elif cmd_args.action == 'stop':

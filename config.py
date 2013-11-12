@@ -29,6 +29,7 @@ home_dir = os.path.expanduser("~")
 home_config = os.path.join(home_dir, ".trade_tools.config.py")
 
 log_dir = '/apps/log'
+pid_dir = '/apps/pid'
 
 
 ### TRADEHOUSE SETTINGS

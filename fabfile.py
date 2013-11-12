@@ -9,7 +9,8 @@ env.app_name = 'trade-tools'
 env.apps_path = '/apps'
 env.git_clone = 'https://github.com/mettienne/trade-import.git'
 env.app_path = os.path.join(env.apps_path, env.app_name)
-env.log_path = os.path.join(env.apps_path, 'log')
+env.log_path = config.log_dir
+env.pid_path = config.pid_dir
 env.venv_path = os.path.join(env.app_path, '_venv')
 
 def test():
@@ -20,7 +21,7 @@ def itest():
     print(_yellow('>>> starting {}'.format(_fn())))
     local('py.test -sx --cov-report term-missing --cov . test/itest*.py')
 
-def local():
+def dev():
     env.user = 'mikko'
     env.hosts = ['localhost']
     env.app_path = os.path.join(env.apps_path, env.app_name)
@@ -66,7 +67,8 @@ def mkdirs():
     print(_yellow('>>> starting {}'.format(_fn())))
     run('sudo mkdir -p {}'.format(env.apps_path))
     run('sudo chown {} {}'.format(env.user, env.apps_path))
-    run('sudo mkdir -p {}'.format(env.log_path))
+    run('mkdir -p {}'.format(env.log_path))
+    run('mkdir -p {}'.format(env.pid_path))
     #run('mkdir -p {}'.format(os.path.join(env.app_path, config.log_dir)))
 
 def setup_virtualenv():
