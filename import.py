@@ -23,28 +23,43 @@ connected = False
 
 class Importer(daemon.Daemon):
 
+    def __init__(self, app_name, *args, **kwargs):
+        daemon.Daemon.__init__(self, app_name, *args, **kwargs)
+
+        self.ssh_process = None
+        self.conn = MongoClient(config.uri)
+        self.db = self.conn.invoice
+        self.parser = parsing.Parser()
+
     def all(self):
-        import_collection(nm.Item(), db.items, config.item_file)
-        contacts()
-        invoices()
-        #import_collection()
+        logger.info('starting all')
+        self.import_collection(nm.Item(), self.db.items, config.item_file)
+        self.contacts()
+        self.invoices()
+        logger.info('done with all')
 
     def invoices(self):
-        import_inv_cred(config.sales_invoice_line, config.sales_invoice_head, nm.SalesInvoice(), db.salesinvoices)
+        logger.info('starting invoice import')
+        self.import_inv_cred(config.sales_invoice_line, config.sales_invoice_head, nm.SalesInvoice(), self.db.salesinvoices)
+        logger.info('done with invoice import')
 
     def contacts(self):
-        import_collection(nm.Deptor(), db.deptors, config.deptor_file, True)
-        import_collection(nm.Creditor(), db.creditors, config.creditor_file, True)
+        logger.info('starting contacts import')
+        self.import_collection(nm.Deptor(), self.db.deptors, config.deptor_file, True)
+        self.import_collection(nm.Creditor(), self.db.creditors, config.creditor_file, True)
+        logger.info('done with contacts import')
 
     def order_numbers(self):
+        logger.info('starting order numbers import')
         for line in open(os.path.join(config.path, config.cust_order_numbers), 'r'):
             invoice_number, order_number = line.strip().split(',')[:2]
-            db.salesinvoices.update({ 'key': invoice_number }, { '$set': { 'customer_order_number': order_number }})
+            self.db.salesinvoices.update({ 'key': invoice_number }, { '$set': { 'customer_order_number': order_number }})
+        logger.info('done with order numbers import')
 
 
     def import_collection(self, element, collection, filename, city_zip=False):
-        split = parser.parse_file(filename)
-        for i, line in enumerate(parser.get_lines(split)):
+        split = self.parser.parse_file(filename)
+        for i, line in enumerate(self.parser.get_lines(split)):
             if i % 100 == 0:
                 logger.info('progress file {}: {}'.format(filename, i))
 
@@ -55,11 +70,11 @@ class Importer(daemon.Daemon):
 
 
     def import_inv_cred(self, lines_name, heads_filename, element, collection):
-        parsed_lines = parser.parse_file(lines_name)
+        parsed_lines = self.parser.parse_file(lines_name)
         result = {}
 
         line_element = nm.SalesInvCredLine()
-        lines = parser.get_lines(parsed_lines)
+        lines = self.parser.get_lines(parsed_lines)
         for i, l in enumerate(lines):
             if i % 10000 == 0:
                 logger.info('processed lines: {}'.format(i))
@@ -67,12 +82,12 @@ class Importer(daemon.Daemon):
             obj = line_element.format(l, False)
             result.setdefault(obj.pop('key'), []).append(obj)
 
-        parsed_heads = parser.parse_file(heads_filename)
+        parsed_heads = self.parser.parse_file(heads_filename)
         insert_creditnotas(parsed_heads, result, element, collection)
 
 
     def insert_creditnotas(self, parsed_heads, d_lines, element, collection):
-        for i, line in enumerate(parser.get_lines(parsed_heads)):
+        for i, line in enumerate(self.parser.get_lines(parsed_heads)):
             if i % 100 == 0:
                 logger.info('progress file {}: {}'.format('inv/cred', i))
 
@@ -98,18 +113,22 @@ class Importer(daemon.Daemon):
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         output,stderr = process.communicate()
 
+    def close(self):
+        process.terminate()
+        if conn:
+            conn.close()
+
 
     def run(self):
         process = Process(target=self.connect)
         process.start()
 
         def signal_handler(signal, frame):
-            process.terminate()
+            self.close()
             logger.info('main thread cought exit')
             sys.exit('exiting')
 
         signal.signal(signal.SIGTERM, signal_handler)
-
         logger.info('checking if ssh thread timed out')
         time.sleep(config.ssh_timeout + 1)
 
@@ -119,57 +138,25 @@ class Importer(daemon.Daemon):
             logger.info('ssh looks good, starting main loop')
 
 
-        conn = None
         try:
-            conn = MongoClient(config.uri)
-            db = conn.invoice
-            parser = parsing.Parser()
 
-            if cmd_args.method:
-                possibles = globals().copy()
-                possibles.update(locals())
-                method = possibles.get(cmd_args.method)
-                method()
-            else:
-                last_run = None
-                while True:
-                    now = datetime.now()
-                    #run once every hour and only in specified minute interval
-                    if now.minute > 30 and now.minute < 45 and (not last_run or now - last_run > timedelta(minutes=30)):
-                        last_run = now
-                        logger.info('Starting sync')
-                        all()
+            last_run = None
+            while True:
+                now = datetime.now()
+                #run once every hour and only in specified minute interval
+                if now.minute > 30 and now.minute < 45 and (not last_run or now - last_run > timedelta(minutes=30)):
+                    last_run = now
+                    logger.info('Starting sync')
+                    self.all()
 
-                    time.sleep(10)
-                    logger.info('Sleeping: {}'.format(now))
+                time.sleep(10)
+                logger.info('Sleeping: {}'.format(now))
 
 
 
         except Exception as ex:
+            self.close()
             logger.exception(ex)
-            process.terminate()
-            if conn:
-                conn.close()
-
-        process.terminate()
-
-def configure(config_files):
-
-    def load_config_file(config_file):
-        print "Loading", config_file
-        cfg = {}
-        execfile(config_file, {}, cfg)
-        for key, value in cfg.items():
-            if not hasattr(config, key):
-                raise Exception("Unknown config variable in {}:"
-                                " {}".format(config_file, key))
-            setattr(config, key, value)
-
-    if os.path.exists(config.home_config):
-        load_config_file(config.home_config)
-
-    for config_file in config_files:
-        load_config_file(config_file)
 
 if __name__ == '__main__':
 
@@ -178,17 +165,30 @@ if __name__ == '__main__':
             '-c', '--config', type=str, nargs="*",
             help="List of configuration files to import (python modules)")
     parser.add_argument('-m', '--method', help="all, invoices or the like")
-    parser.add_argument('action', choices=['start', 'stop','restart'])
+    parser.add_argument('action', choices=['start', 'stop','restart', 'run'])
     cmd_args = parser.parse_args()
 
 
-    configure(cmd_args.config or [])
+    config.configure(cmd_args.config or [])
 
     daemon = Importer(os.path.join(config.pid_dir, 'test.pid'))
     if cmd_args.action == 'start':
         daemon.start()
     elif cmd_args.action == 'stop':
         daemon.stop()
+    elif cmd_args.action == 'restart':
+        daemon.restart()
+    elif cmd_args.action == 'run':
+        if not cmd_args.method:
+            logger.critical('method must be defined when running run')
+        else:
+            attr = getattr(daemon, cmd_args.method, None)
+            if attr is None:
+                logger.critical('method unknown')
+            else:
+                attr()
+
+
 
 
 

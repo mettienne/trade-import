@@ -25,12 +25,14 @@ amqp_user = 'guest'
 amqp_password = 'guest'
 
 ### GLOBAL SETTINGS
-home_dir = os.path.expanduser("~")
-home_config = os.path.join(home_dir, ".trade_tools.config.py")
 
 log_dir = '/apps/log'
 pid_dir = '/apps/pid'
+monit_dir = '/apps/monit'
+apps_dir = '/apps'
+config_dir = '/apps/config'
 
+extra_config = os.path.join(config_dir, "trade_tools.py")
 
 ### TRADEHOUSE SETTINGS
 
@@ -63,8 +65,8 @@ def configure(config_files):
                                 " {}".format(config_file, key))
             setattr(module, key, value)
 
-    if os.path.exists(home_config):
-        load_config_file(home_config)
+    if os.path.exists(extra_config):
+        load_config_file(extra_config)
 
     for config_file in config_files:
         load_config_file(config_file)
