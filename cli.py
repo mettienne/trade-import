@@ -30,7 +30,7 @@ def run(app_name, worker):
         daemon.restart()
     elif cmd_args.action == 'run':
         if not cmd_args.method:
-            logger.critical('method must be defined when running run')
+            daemon.run()
         else:
             attr = getattr(daemon, cmd_args.method, None)
             if attr is None:

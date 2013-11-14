@@ -17,12 +17,16 @@ class SSH(daemon.Daemon):
             process.terminate()
 
 
+        logger.info('opening ssh connection')
         signal.signal(signal.SIGTERM, signal_handler)
         logger.info('connecting')
         process = subprocess.Popen(['ssh', '-o', 'ConnectTimeout={}'.format(config.ssh_timeout),
             '-N', '-L', '27018:localhost:22282', config.mongoSSH],
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         output,stderr = process.communicate()
+        logger.info(output)
+        logger.info(stderr)
+        logger.info('ssh tunnel closed')
 
 
 
