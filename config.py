@@ -46,9 +46,6 @@ data_path = os.path.join(cur_dir, 'data')
 env = 'test' # or prod
 
 ### DS FTP
-#server = '217.10.25.76'
-#user = 'TradeHouseDenmark'
-#password = 'xX!mc6Z1'
 ftp_server = 'ettienne.webfactional.com'
 ftp_user = 'navigator'
 ftp_password = ''
