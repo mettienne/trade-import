@@ -48,6 +48,7 @@ def log():
 def start():
     print(_yellow('>>> starting {}'.format(_fn())))
     with cd(env.app_path):
+        run('sudo monit reload')
         run('sudo monit restart ssh')
         run('sudo monit restart import')
         run('sudo monit restart edi_ftp')
