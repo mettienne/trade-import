@@ -40,7 +40,8 @@ extra_config = os.path.join(config_dir, "trade_tools.py")
 trade_cvr = '26704561'
 trade_ean = '90000' + trade_cvr
 
-data_path = 'data'
+cur_dir = os.path.dirname(os.path.realpath(__file__))
+data_path = os.path.join(cur_dir, 'data')
 
 env = 'test' # or prod
 
