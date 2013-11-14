@@ -31,7 +31,7 @@ class OIOXML():
             <Invoice>
                     <ID>2345671</ID>
                     <IssueDate>2004-12-31</IssueDate>
-                    <TypeCode>PIE</TypeCode>
+                    <TypeCode>PIETEST</TypeCode>
                     <InvoiceCurrencyCode>DKK</InvoiceCurrencyCode>
                     <BuyersReferenceID schemeID="EAN"></BuyersReferenceID>
                     <ReferencedOrder>
