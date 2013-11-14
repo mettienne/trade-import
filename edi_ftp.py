@@ -24,8 +24,8 @@ class DS(daemon.Daemon):
                 password=config.amqp_password)
         try:
             amqp.start()
-        except (KeyboardInterrupt, SystemExit):
-            pass
+        except (KeyboardInterrupt, SystemExit) as ex:
+            logger.exception(ex)
         except Exception as ex:
             logger.exception(ex)
             raise

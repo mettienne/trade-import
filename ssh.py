@@ -19,6 +19,7 @@ class SSH(daemon.Daemon):
 
         logger.info('opening ssh connection')
         signal.signal(signal.SIGTERM, signal_handler)
+        signal.signal(signal.SIGKILL, signal_handler)
         logger.info('connecting')
         process = subprocess.Popen(['ssh', '-o', 'ConnectTimeout={}'.format(config.ssh_timeout),
             '-N', '-L', '27018:localhost:22282', config.mongoSSH],
