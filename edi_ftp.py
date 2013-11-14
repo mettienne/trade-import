@@ -3,6 +3,7 @@ logging_config.configure('edi_ftp')
 import config
 import ftplib
 import json
+import cli
 from utils.amqp import BlockingAMQP
 from utils.export import OIOXML
 from  pymongo import MongoClient
@@ -11,9 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 
-class DS():
+class DS(Daemon):
 
-    def __init__(self):
+    def run(self):
         logger.info('Starting DS amqp handler')
         self.oio = OIOXML()
         amqp = BlockingAMQP(on_message=self.on_message,
@@ -53,8 +54,7 @@ class DS():
         ftp.close()
 
 if __name__ == '__main__':
-    config.configure([])
-    DS()
+    cli.run('edi_ftp', DS)
 
 
 

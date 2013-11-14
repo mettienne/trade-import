@@ -1,5 +1,3 @@
-import logging_config
-logging_config.configure('import')
 import logging
 from  pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -8,7 +6,6 @@ import os.path
 import parsing
 import navi_mappings as nm
 import config
-import argparse
 import daemon
 import subprocess
 import time
@@ -17,6 +14,7 @@ import setproctitle
 from multiprocessing import Process, Pipe
 from datetime import datetime, timedelta
 import sys
+import cli
 
 logger = logging.getLogger(__name__)
 connected = False
@@ -24,9 +22,20 @@ connected = False
 class Importer(daemon.Daemon):
 
     def __init__(self, app_name, *args, **kwargs):
+
+        def signal_handler(signal, frame):
+            self.close()
+            logger.info('main thread cought exit')
+            sys.exit('exiting')
+
+        signal.signal(signal.SIGTERM, signal_handler)
+
         daemon.Daemon.__init__(self, app_name, *args, **kwargs)
 
-        self.ssh_process = None
+        self.process = None
+        if '27018' in config.uri:
+            self.ssh()
+
         self.conn = MongoClient(config.uri)
         self.db = self.conn.invoice
         self.parser = parsing.Parser()
@@ -83,7 +92,7 @@ class Importer(daemon.Daemon):
             result.setdefault(obj.pop('key'), []).append(obj)
 
         parsed_heads = self.parser.parse_file(heads_filename)
-        insert_creditnotas(parsed_heads, result, element, collection)
+        self.insert_creditnotas(parsed_heads, result, element, collection)
 
 
     def insert_creditnotas(self, parsed_heads, d_lines, element, collection):
@@ -114,34 +123,31 @@ class Importer(daemon.Daemon):
         output,stderr = process.communicate()
 
     def close(self):
-        process.terminate()
+        self.process.terminate()
         if conn:
             conn.close()
 
+    def ssh(self):
+        self.process = Process(target=self.connect)
+        self.process.start()
 
-    def run(self):
-        process = Process(target=self.connect)
-        process.start()
-
-        def signal_handler(signal, frame):
-            self.close()
-            logger.info('main thread cought exit')
-            sys.exit('exiting')
-
-        signal.signal(signal.SIGTERM, signal_handler)
         logger.info('checking if ssh thread timed out')
         time.sleep(config.ssh_timeout + 1)
 
-        if not process.is_alive():
+        if not self.process.is_alive():
             logger.error('SSH connection failed')
         else:
             logger.info('ssh looks good, starting main loop')
 
 
-        try:
 
+    def run(self):
+        try:
             last_run = None
             while True:
+                if self.user_ssh and not self.process.is_alive():
+                    raise Exception('SSH connection lost, exiting')
+
                 now = datetime.now()
                 #run once every hour and only in specified minute interval
                 if now.minute > 30 and now.minute < 45 and (not last_run or now - last_run > timedelta(minutes=30)):
@@ -152,44 +158,11 @@ class Importer(daemon.Daemon):
                 time.sleep(10)
                 logger.info('Sleeping: {}'.format(now))
 
-
-
         except Exception as ex:
             self.close()
             logger.exception(ex)
 
 if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser(description='Admin Server Help')
-    parser.add_argument(
-            '-c', '--config', type=str, nargs="*",
-            help="List of configuration files to import (python modules)")
-    parser.add_argument('-m', '--method', help="all, invoices or the like")
-    parser.add_argument('action', choices=['start', 'stop','restart', 'run'])
-    cmd_args = parser.parse_args()
-
-
-    config.configure(cmd_args.config or [])
-
-    daemon = Importer(os.path.join(config.pid_dir, 'test.pid'))
-    if cmd_args.action == 'start':
-        daemon.start()
-    elif cmd_args.action == 'stop':
-        daemon.stop()
-    elif cmd_args.action == 'restart':
-        daemon.restart()
-    elif cmd_args.action == 'run':
-        if not cmd_args.method:
-            logger.critical('method must be defined when running run')
-        else:
-            attr = getattr(daemon, cmd_args.method, None)
-            if attr is None:
-                logger.critical('method unknown')
-            else:
-                attr()
-
-
-
-
+    cli.run('import', Importer)
 
 

@@ -16,7 +16,7 @@ def configure(app_id=''):
 
     logging.config.dictConfig({
         'version': 1,
-        'disable_existing_loggers': True,
+        'disable_existing_loggers': False,
         'formatters': {
             'verbose': {
                 'format': '%(asctime)s %(name)-22s %(levelname)-8s %(message)s'
