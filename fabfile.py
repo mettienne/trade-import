@@ -65,7 +65,7 @@ def prod():
 
 def copy():
     with cd(env.app_path):
-        run('cp *monit.cfg {}'.format(config.monit_dir))
+        run('cp monit/*monit.cfg {}'.format(config.monit_dir))
 
 def clone():
     print(_yellow('>>> starting {}'.format(_fn())))

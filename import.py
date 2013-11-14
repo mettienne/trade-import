@@ -7,11 +7,8 @@ import parsing
 import navi_mappings as nm
 import config
 import daemon
-import subprocess
 import time
 import signal
-import setproctitle
-from multiprocessing import Process, Pipe
 from datetime import datetime, timedelta
 import sys
 import cli
@@ -31,10 +28,6 @@ class Importer(daemon.Daemon):
         signal.signal(signal.SIGTERM, signal_handler)
 
         daemon.Daemon.__init__(self, app_name, *args, **kwargs)
-
-        self.process = None
-        if '27018' in config.uri:
-            self.ssh()
 
         self.conn = MongoClient(config.uri)
         self.db = self.conn.invoice
@@ -107,47 +100,15 @@ class Importer(daemon.Daemon):
                     { '$set': obj }, upsert=True)
 
 
-    def connect(self):
-
-        def signal_handler(signal, frame):
-            logger.info('ssh thread cought exit')
-            process.terminate()
-
-
-        signal.signal(signal.SIGTERM, signal_handler)
-        setproctitle.setproctitle('ssh thread')
-        logger.info('connecting')
-        process = subprocess.Popen(['ssh', '-o', 'ConnectTimeout={}'.format(config.ssh_timeout),
-            '-N', '-L', '27018:localhost:22282', config.mongoSSH],
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        output,stderr = process.communicate()
-
     def close(self):
-        self.process.terminate()
-        if conn:
-            conn.close()
-
-    def ssh(self):
-        self.process = Process(target=self.connect)
-        self.process.start()
-
-        logger.info('checking if ssh thread timed out')
-        time.sleep(config.ssh_timeout + 1)
-
-        if not self.process.is_alive():
-            logger.error('SSH connection failed')
-        else:
-            logger.info('ssh looks good, starting main loop')
-
+        if self.conn:
+            self.conn.close()
 
 
     def run(self):
         try:
             last_run = None
             while True:
-                if self.user_ssh and not self.process.is_alive():
-                    raise Exception('SSH connection lost, exiting')
-
                 now = datetime.now()
                 #run once every hour and only in specified minute interval
                 if now.minute > 30 and now.minute < 45 and (not last_run or now - last_run > timedelta(minutes=30)):
