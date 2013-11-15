@@ -73,7 +73,7 @@ class Item(NaviObject):
         self.price_4 = (98, parser.get_price)
         self.inner_box = (76, parser.get_qty)
         self.outer_box = (77, parser.get_qty)
-        self.quantity = (77, parser.get_qty)
+        self.quantity = (78, parser.get_qty)
         self.ean = (81, string)
         self.group = (108, string)
 
