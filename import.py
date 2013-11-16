@@ -101,7 +101,18 @@ class Importer(daemon.Daemon):
 
             obj = element.format(line, True)
             key = obj.pop('key')
-            obj[nm.lines] = d_lines.get(key, [])
+            lines = d_lines.get(key, [])
+            comments = []
+            final_lines = []
+            for line in lines:
+                if line['quantity'] == 0:
+                    if line['info']:
+                        comments.append(line['info'])
+                else:
+                    final_lines.append(line)
+
+            obj[nm.lines] = final_lines
+            obj[nm.comments] = comments
             collection.update({ 'key': key },
                     { '$set': obj }, upsert=True)
 

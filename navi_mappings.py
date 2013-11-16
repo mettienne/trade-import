@@ -7,6 +7,7 @@ update_key = 'last_updated'
 city = 'city'
 zip = 'zip'
 lines = 'lines'
+comments = 'comments'
 
 parser = parsing.Parser()
 
