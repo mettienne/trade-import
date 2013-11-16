@@ -106,7 +106,7 @@ class SalesInvoice(NaviObject):
         self.edi = (72, string)
         self.customer_order_number = (76, string)
 
-class SalesCreditNota(NaviObject):
+class SalesCreditnota(NaviObject):
 
     def __init__(self):
         self.customer_number = (0, string)
@@ -118,6 +118,3 @@ class SalesCreditNota(NaviObject):
         self.city_zip = (7, string, { 'log': False })
         self.attention = (8, string)
         self.posting_date = (17, parser.get_date)
-        self.total_with_tax = (68, parser.get_price)
-        self.edi = (72, string)
-        self.customer_order_number = (76, string)

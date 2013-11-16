@@ -37,6 +37,7 @@ class Importer(daemon.Daemon):
         logger.info('starting all')
         self.import_collection(nm.Item(), self.db.items, config.item_file)
         self.contacts()
+        self.creditnotas()
         self.invoices()
         logger.info('done with all')
 
@@ -44,6 +45,11 @@ class Importer(daemon.Daemon):
         logger.info('starting invoice import')
         self.import_inv_cred(config.sales_invoice_line, config.sales_invoice_head, nm.SalesInvoice(), self.db.salesinvoices)
         logger.info('done with invoice import')
+
+    def creditnotas(self):
+        logger.info('starting creditnota import')
+        self.import_inv_cred(config.sales_creditnota_line, config.sales_creditnota_head, nm.SalesCreditnota(), self.db.salescreditnotas)
+        logger.info('done with creditnota import')
 
     def contacts(self):
         logger.info('starting contacts import')

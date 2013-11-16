@@ -11,6 +11,8 @@ creditor_file = 'kreditor.txt'
 item_file = 'vare.txt'
 sales_invoice_line = 'salgsfakturalinie.txt'
 sales_invoice_head = 'salgsfakturahovede.txt'
+sales_creditnota_line = 'salgskreditnotalinie.txt'
+sales_creditnota_head = 'salgskreditnotahovede.txt'
 cust_order_numbers = 'kundeordrenumre.txt'
 
 ### DATABASE
