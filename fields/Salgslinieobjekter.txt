@@ -1,0 +1,66 @@
+BilagsArt
+KundeNr
+BilagsNr
+LøbeNr
+Art
+Nummer
+LokationsKode
+Bogf.Gr
+MængdeRabatKode
+Lev.Dato
+Tekst
+Tekst 2
+Enhed
+Antal
+RestOrdre(antal)
+Faktureres
+Leveres
+Apris
+KostPris
+MomsKode
+Moms%
+MængdeRabat%
+Rabat%
+RabatBeløb
+NettoBeløb
+BruttoBeløb
+Beregn Fak.Rabat
+BruttoVægt
+NettoVægt
+Antal pr. Kolli
+Rumfang
+UdlignLøbeNr
+AfdelingsKode
+ProjektKode
+PrisGruppeNr
+Beregn M.Rabat
+SagsNr
+SagsPostLøbeNr
+HovedAktivitet
+UnderAktivitet
+DelAktivitet
+SagsUdligningsID
+UdlignSagEksakt
+ArbejdsTypeKode
+SerieNr
+Deb.VareRabat%
+RestOrdre(beløb)
+Lev.EjFak.(antal)
+Lev.EjFak.(beløb)
+Leveret(antal)
+Faktureret(antal)
+LeveranceNr
+LeveranceLøbeNr
+Avance%
+TransaktionsArt
+TransportMåde
+Plac.4
+Plac.2
+Plac.3
+Plac.1
+Rute
+Udsolgt
+Dobbelt
+Indlæsning
+Ean nr.
+Lev.lager.

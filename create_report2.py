@@ -4,7 +4,7 @@ import sys
 
 f0 = open(sys.argv[1])
 #f1 = open('/tradehouse/navi/navi/t', 'w')
-f1 = open('/Users/mikko/Desktop/Trade/navi/navi/' + sys.argv[2], 'w')
+f1 = open('temp-report.txt', 'w')
 #f1 = open('t', 'w')
 #f1.write(unicode('genDESTINATION(\'/tradehouse/test.txt\', FALSE);\n', 'cp850'))
 #f1.write(unicode('genDESTINATION(\'/Users/mikko/Desktop/test.txt\', FALSE);\n', 'cp850'))

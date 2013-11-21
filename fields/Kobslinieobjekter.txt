@@ -1,0 +1,48 @@
+BilagsArt
+LeverandørNr
+BilagsNr
+LøbeNr
+Art
+Nummer
+LokationsKode
+Bogf.Gr
+Lev.Dato
+Tekst
+Tekst 2
+Enhed
+Antal
+RestOrdre(antal)
+Faktureres
+Leveres
+Apris KostPris MomsKode
+Moms%
+MængdeRabat%
+Rabat%
+RabatBeløb
+NettoBeløb
+BruttoBeløb
+SalgsPris
+Beregn Fak.Rabat
+BruttoVægt
+NettoVægt
+Antal pr. Kolli
+Rumfang
+UdlignLøbeNr
+AfdelingsKode
+ProjektKode
+SagsNr
+HovedAktivitet
+UnderAktivitet
+DelAktivitet
+SerieNr
+Omkostnings%
+RestOrdre(beløb)
+Lev.EjFak.(antal)
+Lev.EjFak.(beløb)
+Leveret(antal)
+Faktureret(antal)
+LeveranceNr
+LeveranceLøbeNr
+Avance%
+TransaktionsArt
+TransportMåde

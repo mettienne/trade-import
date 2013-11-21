@@ -1,0 +1,91 @@
+Art
+KundeNr
+Nummer
+DebitorNr
+Navn
+Navn 2
+Adresse
+Adresse 2
+PostNr+By
+Attention
+D/V Ref.
+Lev.Nr
+Lev.Navn
+Lev.Navn2
+Lev.Adr.1
+Lev.Adr.2
+Lev.Adr.3
+Lev.Att.
+OrdreDato
+Bogf.Dato
+Lev.Dato
+Post.Tekst
+BetalingsBet.Kode
+ForfaldsDato
+Kont.Rabat%
+Kont.RabatDato
+LeveringsKode
+LokationsKode
+AfdelingsKode
+ProjektKode
+Bogf.Gr
+ValutaKode
+ValutaKurs
+PrisGruppeNr
+BruttoPriser
+Beregn M.Rabat
+Fak.RabatKode
+Deb.VareRabatGr
+SprogKode
+MomsPligtig
+SælgerKode
+OrdreGruppe
+Bemærkning
+Udskrevet
+Afvent
+UdlignArt
+UdlignNr
+ModKonto
+SagsNr
+Leveres
+Faktureres
+NettoTotal%
+BruttoTotal%
+Næste LeveranceNr
+Næste FakturaNr
+Sidste LeveranceNrn
+Sidste FakturaNr
+MomsNr
+SamleFakturering
+TransaktionsArt
+TransportMåde
+LandeKode
+Klar forsendelse
+Modtaget kl.
+Modtaget dato
+Sendt kl.
+Sendt dato
+Sendt med
+Vægt
+Antal colli
+Pakket af
+Pakke nr.
+Colli nr
+Pakke nr. 2
+Pakke nr. 3
+Antal Paller
+Byttepalle
+1/1 palle
+1/2 palle
+Prv palle
+Sendt med/afhent af
+Sendt
+Lev.dato før
+Plac.ændret
+Gadevogn
+Udsolgte varer
+Udlæs
+Fragt erhvervspk.
+Krn ordredato
+Kundeordrenr.
+EAN
