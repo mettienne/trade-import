@@ -44,7 +44,8 @@ class BlockingAMQP():
                     exchange='',
                     routing_key=props.reply_to,
                     properties=pika.BasicProperties(
-                        correlation_id=props.correlation_id),
+                        correlation_id=props.correlation_id,
+                        content_type='application/json'),
                     body=response)
         channel.basic_ack(method.delivery_tag)
 

@@ -36,7 +36,10 @@ class DS(daemon.Daemon):
         try:
             element = json.loads(body)
             xml_file = self.oio.create_element(element['invoice'], element['deptor'])
-            self.do_ftp(xml_file, element['invoice']['key'])
+            if not element['dry_run']:
+                self.do_ftp(xml_file, element['invoice']['key'])
+            else:
+                logger.info('Dry run {}'.format(element))
             xml_file.close()
 
             return json.dumps({ 'success': True })

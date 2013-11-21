@@ -89,12 +89,13 @@ class OIOXML():
             header.find('IssueDate').text = posting_date.split('T')[0]
         else:
             header.find('IssueDate').text = posting_date.isoformat().split('T')[0]
-        if config.env == 'prod':
+
+        if 'test' in elem and  elem['test']:
+            header.find('TypeCode').text = 'PIETEST'
+        else:
             header.find('TypeCode').text = 'PIE'
 
-
         #if fak.type == 'faktura':
-            #header.find('TypeCode').text = 'PIETEST'
         #else:
             #header.find('TypeCode').text = 'PCMTEST'
 

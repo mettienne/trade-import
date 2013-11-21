@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 import sys, os, time, atexit
+import logging
 from signal import SIGTERM
+
+logger = logging.getLogger(__name__)
 
 class Daemon:
 	"""
@@ -84,7 +87,11 @@ class Daemon:
                 print 'ready'
 		self.daemonize()
                 print 'daemon'
-		self.run()
+                try:
+		    self.run()
+                except Exception as ex:
+                    logger.exception(ex)
+                    raise
 
 	def stop(self):
 		"""

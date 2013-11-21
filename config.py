@@ -5,15 +5,20 @@ import logging_config
 module = sys.modules[__name__]
 
 ### IMPORTING
-path = 'text_values'
+path = 'export/bootstrap'
 deptor_file = 'debitor.txt'
 creditor_file = 'kreditor.txt'
 item_file = 'vare.txt'
 sales_invoice_line = 'salgsfakturalinie.txt'
 sales_invoice_head = 'salgsfakturahovede.txt'
+purchase_invoice_line = 'kobsfakturalinie.txt'
+purchase_invoice_head = 'kobsfakturahovede.txt'
 sales_creditnota_line = 'salgskreditnotalinie.txt'
 sales_creditnota_head = 'salgskreditnotahovede.txt'
+purchase_creditnota_line = 'kobskreditnotalinie.txt'
+purchase_creditnota_head = 'kobskreditnotahoved.txt'
 cust_order_numbers = 'kundeordrenumre.txt'
+item_entries = 'varepost.txt'
 
 ### DATABASE
 uri = "mongodb://localhost:27017/invoice"
@@ -44,8 +49,6 @@ trade_ean = '90000' + trade_cvr
 
 cur_dir = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(cur_dir, 'data')
-
-env = 'test' # or prod
 
 ### DS FTP
 ftp_server = 'ettienne.webfactional.com'

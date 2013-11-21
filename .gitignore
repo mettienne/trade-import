@@ -3,6 +3,7 @@
 .*\.ropeproject/*
 *.log
 text_values/
+export/
 pickle/
 .DS_Store
 out.log

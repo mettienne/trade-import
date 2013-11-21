@@ -37,19 +37,42 @@ class Importer(daemon.Daemon):
         logger.info('starting all')
         self.import_collection(nm.Item(), self.db.items, config.item_file)
         self.contacts()
-        self.creditnotas()
-        self.invoices()
+        self.salescreditnotas()
+        self.salesinvoices()
+        self.itementries()
         logger.info('done with all')
 
-    def invoices(self):
-        logger.info('starting invoice import')
-        self.import_inv_cred(config.sales_invoice_line, config.sales_invoice_head, nm.SalesInvoice(), self.db.salesinvoices)
-        logger.info('done with invoice import')
+    def bootstrap(self):
+        self.speed_import_collection(nm.ItemEntry(), self.db.itementries, config.item_entries)
 
-    def creditnotas(self):
-        logger.info('starting creditnota import')
-        self.import_inv_cred(config.sales_creditnota_line, config.sales_creditnota_head, nm.SalesCreditnota(), self.db.salescreditnotas)
-        logger.info('done with creditnota import')
+    def itementries(self):
+        logger.info('starting item entry import')
+        self.import_collection(nm.ItemEntry(), self.db.itementries, config.item_entries)
+        logger.info('done with item entry import')
+
+    def salesinvoices(self):
+        logger.info('starting sales invoice import')
+        self.import_inv_cred(config.sales_invoice_line, config.sales_invoice_head,
+                nm.SalesInvoice(), self.db.salesinvoices, nm.SalesInvCredLine())
+        logger.info('done with sales invoice import')
+
+    def purchaseinvoices(self):
+        logger.info('starting purchase invoice import')
+        self.import_inv_cred(config.purchase_invoice_line, config.purchase_invoice_head,
+                nm.PurchaseInvoice(), self.db.purchaseinvoices, nm.PurchaseInvCredLine())
+        logger.info('done with purchase invoice import')
+
+    def salescreditnotas(self):
+        logger.info('starting sales creditnota import')
+        self.import_inv_cred(config.sales_creditnota_line, config.sales_creditnota_head,
+                nm.SalesCreditnota(), self.db.salescreditnotas, nm.SalesInvCredLine())
+        logger.info('done with sales creditnota import')
+
+    def purchasecreditnotas(self):
+        logger.info('starting purchase creditnota import')
+        self.import_inv_cred(config.purchase_creditnota_line, config.purchase_creditnota_head,
+                nm.PurchaseCreditnota(), self.db.purchasecreditnotas, nm.PurchaseInvCredLine())
+        logger.info('done with purchase creditnota import')
 
     def contacts(self):
         logger.info('starting contacts import')
@@ -65,6 +88,25 @@ class Importer(daemon.Daemon):
         logger.info('done with order numbers import')
 
 
+    def speed_import_collection(self, element, collection, filename, city_zip=False):
+        split = self.parser.parse_file(filename)
+        lines = []
+        for i, line in enumerate(self.parser.get_lines(split)):
+            if i % 100 == 0:
+                logger.info('progress file {}: {}'.format(filename, i))
+
+            obj = element.format(line, city_zip)
+            lines.append(obj)
+            if len(lines) >= 10:
+                collection.insert(lines)
+                lines = []
+
+        if lines:
+            collection.insert(lines)
+
+            #collection.update({ 'key': obj.pop('key') },
+                    #{ '$set': obj }, upsert=True)
+
     def import_collection(self, element, collection, filename, city_zip=False):
         split = self.parser.parse_file(filename)
         for i, line in enumerate(self.parser.get_lines(split)):
@@ -77,11 +119,10 @@ class Importer(daemon.Daemon):
 
 
 
-    def import_inv_cred(self, lines_name, heads_filename, element, collection):
+    def import_inv_cred(self, lines_name, heads_filename, element, collection, line_element):
         parsed_lines = self.parser.parse_file(lines_name)
         result = {}
 
-        line_element = nm.SalesInvCredLine()
         lines = self.parser.get_lines(parsed_lines)
         for i, l in enumerate(lines):
             if i % 10000 == 0:

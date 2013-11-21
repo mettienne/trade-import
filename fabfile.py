@@ -1,9 +1,10 @@
 from fabric.api import local, env, sudo, run
-from fabric.context_managers import cd, prefix
+from fabric.context_managers import cd, prefix, lcd
 from fabric.colors import yellow as _yellow
 import os.path
 import inspect
 import config
+from fabric.contrib.project import rsync_project
 
 env.app_name = 'trade-tools'
 env.git_clone = 'https://github.com/mettienne/trade-import.git'
@@ -53,6 +54,10 @@ def start():
         run('sudo monit restart import')
         run('sudo monit restart edi_ftp')
 
+def sync():
+    print(_yellow('>>> starting {}'.format(_fn())))
+    local('rsync -vaz {}@{}:/export .'.format(env.user, env.host))
+    #rsync_project(local_dir='deploy/', remote_dir=env.app_path, extra_opts='-L')
 
 ### environments
 
