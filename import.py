@@ -35,15 +35,17 @@ class Importer(daemon.Daemon):
 
     def all(self):
         logger.info('starting all')
-        self.import_collection(nm.Item(), self.db.items, config.item_file)
         self.contacts()
         self.salescreditnotas()
         self.salesinvoices()
         self.itementries()
         logger.info('done with all')
 
+    def items(self):
+        self.import_collection(nm.Item(), self.db.items, config.item_file)
+
     def bootstrap(self):
-        self.speed_import_collection(nm.ItemEntry(), self.db.itementries, config.item_entries)
+        self.speed_import_collection(nm.ItemEntry(), self.db.itementries, config.item_entries_b)
 
     def itementries(self):
         logger.info('starting item entry import')

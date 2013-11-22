@@ -74,8 +74,8 @@ class Parser():
         except Exception as e:
             logger.warning('quantity: invalid format, {}, {}'.format(key, string.encode('utf8')))
 
-        if qty < 0:
-            logger.warning('negative quantity: {}, {}'.format(key, string.encode('utf8')))
+        #if qty < 0:
+            #logger.warning('negative quantity: {}, {}'.format(key, string.encode('utf8')))
 
         return qty
 
