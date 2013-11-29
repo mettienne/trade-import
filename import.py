@@ -19,19 +19,23 @@ connected = False
 class Importer(daemon.Daemon):
 
     def __init__(self, app_name, *args, **kwargs):
+        try:
 
-        def signal_handler(signal, frame):
-            self.close()
-            logger.info('main thread cought exit')
-            sys.exit('exiting')
+            def signal_handler(signal, frame):
+                self.close()
+                logger.info('main thread cought exit')
+                sys.exit('exiting')
 
-        signal.signal(signal.SIGTERM, signal_handler)
+            signal.signal(signal.SIGTERM, signal_handler)
 
-        daemon.Daemon.__init__(self, app_name, *args, **kwargs)
+            daemon.Daemon.__init__(self, app_name, *args, **kwargs)
 
-        self.conn = MongoClient(config.uri)
-        self.db = self.conn.invoice
-        self.parser = parsing.Parser()
+            self.conn = MongoClient(config.uri)
+            self.db = self.conn.invoice
+            self.parser = parsing.Parser()
+        except Exception as ex:
+            logger.exception(ex)
+            raise
 
     def all(self):
         logger.info('starting all')

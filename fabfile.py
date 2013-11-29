@@ -50,7 +50,7 @@ def start():
     print(_yellow('>>> starting {}'.format(_fn())))
     with cd(env.app_path):
         run('sudo monit reload')
-        run('sudo monit restart ssh')
+        run('sudo monit stop ssh')
         run('sudo monit restart import')
         run('sudo monit restart edi_ftp')
 
@@ -77,7 +77,7 @@ def prod():
 
 def copy():
     with cd(env.app_path):
-        run('cp monit/*monit.cfg {}'.format(config.monit_dir))
+        run('cp monit/*monit.conf {}'.format(config.monit_dir))
 
 def clone():
     with settings(warn_only=True):

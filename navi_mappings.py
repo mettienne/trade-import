@@ -17,6 +17,7 @@ def string(string, key):
     return string
 
 def to_int(string, key):
+    return string
     try:
         return int(string)
     except:
