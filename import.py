@@ -38,6 +38,8 @@ class Importer(daemon.Daemon):
         self.contacts()
         self.salescreditnotas()
         self.salesinvoices()
+        self.purchaseinvoices()
+        self.purchasecreditnotas()
         self.itementries()
         logger.info('done with all')
 

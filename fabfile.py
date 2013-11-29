@@ -1,5 +1,5 @@
 from fabric.api import local, env, sudo, run
-from fabric.context_managers import cd, prefix, lcd
+from fabric.context_managers import cd, prefix, lcd, settings
 from fabric.colors import yellow as _yellow
 import os.path
 import inspect
@@ -65,9 +65,13 @@ def dev():
     env.user = 'mikko'
     env.hosts = ['localhost']
 
-def prod():
+def trade():
     env.user = 'nelly'
     env.hosts = ['90.185.144.43']
+
+def prod():
+    env.user = 'root'
+    env.hosts = ['144.76.234.182']
 
 ### helpers
 
@@ -76,9 +80,9 @@ def copy():
         run('cp monit/*monit.cfg {}'.format(config.monit_dir))
 
 def clone():
-    print(_yellow('>>> starting {}'.format(_fn())))
-    with cd(config.apps_dir):
-        run('git clone -q --depth 1 {} {}'.format(env.git_clone, env.app_name))
+    with settings(warn_only=True):
+        with cd(config.apps_dir):
+            run('git clone -q --depth 1 {} {}'.format(env.git_clone, env.app_name))
 
 def pull():
     print(_yellow('>>> starting {}'.format(_fn())))
@@ -101,9 +105,11 @@ def setup_virtualenv():
     Setup a fresh virtualenv.
     """
     print(_yellow('>>> starting {}'.format(_fn())))
+    run('easy_install virtualenv')
     run('virtualenv --no-site-packages {}'.format(env.venv_path))
-    virtualenv('easy_install -U setuptools')
-    virtualenv('easy_install pip')
+    run('virtualenv --no-site-packages {}'.format(env.venv_path))
+    #virtualenv('easy_install -U setuptools')
+    #virtualenv('easy_install pip')
 
 def virtualenv(command):
     """
