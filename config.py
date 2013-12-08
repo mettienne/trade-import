@@ -5,7 +5,7 @@ import logging_config
 module = sys.modules[__name__]
 
 ### IMPORTING
-path = 'export'
+path = '/export'
 deptor_file = 'debitor.txt'
 creditor_file = 'kreditor.txt'
 item_file = 'vare.txt'
@@ -19,10 +19,18 @@ purchase_creditnota_line = 'kobskreditnotalinie.txt'
 purchase_creditnota_head = 'kobskreditnotahoved.txt'
 cust_order_numbers = 'kundeordrenumre.txt'
 item_entries = 'varepost.txt'
-item_entries_b = 'bootstrap/varepostbootstrap.txt'
+deptor_entries = 'debitorpost.txt'
+creditor_entries = 'kreditorpost.txt'
+bootstrap_path = 'bootstrap'
 
 ### DATABASE
 uri = "mongodb://localhost:27017/invoice"
+
+### rsync
+
+rsync_user = 'nelly'
+rsync_host = '90.185.144.43'
+rsync_dir = '/'
 
 mongoSSH = "ettienne@ettienne.webfactional.com"
 ssh_timeout = 5

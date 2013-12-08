@@ -37,10 +37,22 @@ def deploy():
     copy()
     start()
 
-def status():
-    print(_yellow('>>> starting {}'.format(_fn())))
-    with cd(env.app_path):
-        run('pm2 list'.format(env.venv_path))
+def index():
+    collections = ['salesinvoices', 'salescreditnotas', 'purchaseinvoices',
+            'purchasecreditnotas', 'itementries', 'deptorentries', 'creditorentries',
+            'items', 'deptors', 'creditors']
+    for collection in collections:
+        run('mongo invoice --eval "db.{}.ensureIndex({{ key: 1 }})"'.format(collection))
+
+    collections = {
+            'salesinvoices': ['name', 'customer_number'],
+            'salescreditnotas': ['name', 'customer_number'],
+            'salesinvoices': ['name', 'customer_number'],
+            'salescreditnotas': ['name', 'customer_number'],
+            }
+    for col, keys in collections.iteritems():
+        for k in keys:
+            run('mongo invoice --eval "db.{}.ensureIndex({{ {}: 1 }})"'.format(col, k))
 
 def log():
     with cd(env.app_path):
@@ -56,7 +68,7 @@ def start():
 
 def sync():
     print(_yellow('>>> starting {}'.format(_fn())))
-    local('rsync -vaz {}@{}:/export .'.format(env.user, env.host))
+    local('rsync -vaz {}@{}:/export {}'.format(env.user, env.host, config.rsync_dir))
     #rsync_project(local_dir='deploy/', remote_dir=env.app_path, extra_opts='-L')
 
 ### environments

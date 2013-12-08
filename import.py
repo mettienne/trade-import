@@ -12,6 +12,7 @@ import signal
 from datetime import datetime, timedelta
 import sys
 import cli
+import subprocess
 
 logger = logging.getLogger(__name__)
 connected = False
@@ -39,6 +40,7 @@ class Importer(daemon.Daemon):
 
     def all(self):
         logger.info('starting all')
+        self.rsync()
         self.contacts()
         self.salescreditnotas()
         self.salesinvoices()
@@ -51,12 +53,19 @@ class Importer(daemon.Daemon):
         self.import_collection(nm.Item(), self.db.items, config.item_file)
 
     def bootstrap(self):
-        self.speed_import_collection(nm.ItemEntry(), self.db.itementries, config.item_entries_b)
+        def get_boot(name):
+            name, ext = name.split('.')
+            return os.path.join(config.bootstrap_path, '{}bootstrap.{}'.format(name, ext))
+        #self.speed_import_collection(nm.ItemEntry(), self.db.itementries, get_boot(config.item_entries))
+        self.speed_import_collection(nm.DeptorEntry(), self.db.deptorentries, get_boot(config.deptor_entries))
+        #self.speed_import_collection(nm.CreditorEntry(), self.db.creditorentries, get_boot(config.creditor_entries))
 
-    def itementries(self):
-        logger.info('starting item entry import')
+    def entries(self):
+        logger.info('starting entry import')
         self.import_collection(nm.ItemEntry(), self.db.itementries, config.item_entries)
-        logger.info('done with item entry import')
+        self.import_collection(nm.CreditorEntry(), self.db.creditorentries, config.creditor_entries)
+        #self.import_collection(nm.DeptorEntry(), self.db.deptorentries, config.deptor_entries)
+        logger.info('done with entry import')
 
     def salesinvoices(self):
         logger.info('starting sales invoice import')
@@ -164,6 +173,15 @@ class Importer(daemon.Daemon):
             obj[nm.comments] = comments
             collection.update({ 'key': key },
                     { '$set': obj }, upsert=True)
+
+    def rsync(self):
+        logger.info('rsync starting for user {} on host {} to dir {}'.format(config.rsync_user, config.rsync_host, config.rsync_dir))
+        try:
+            out = subprocess.check_output(["rsync", "-vaz", '{}@{}:/export'.format(config.rsync_user, config.rsync_host), '{}'.format(config.rsync_dir)])
+            logger.debug(out)
+        except Exception as ex:
+            logger.exception(ex)
+        logger.info('rsync done')
 
 
     def close(self):

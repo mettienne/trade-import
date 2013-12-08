@@ -17,7 +17,6 @@ def string(string, key):
     return string
 
 def to_int(string, key):
-    return string
     try:
         return int(string)
     except:
@@ -177,8 +176,28 @@ class ItemEntry(NaviObject):
         self.date = (2, parser.get_date)
         self.type = (3, string)
         self.record_number = (5, to_int)
+        self.contact_number = (5, to_int)
         self.quantity = (10, parser.get_qty)
         self.item_price = (13, parser.get_price)
         self.total_price = (15, parser.get_price)
         self.item_group = (37, string)
 
+class DeptorEntry(NaviObject):
+
+    def __init__(self):
+        self.key = (0, parser.get_qty)
+        self.deptor_number = (1, string)
+        self.date = (2, parser.get_date)
+        self.type = (3, string)
+        self.record_number= (4, to_int)
+        self.amount= (7, parser.get_price)
+
+class CreditorEntry(NaviObject):
+
+    def __init__(self):
+        self.key = (0, parser.get_qty)
+        self.creditor_number = (1, string)
+        self.date = (2, parser.get_date)
+        self.type = (3, string)
+        self.record_number= (4, to_int)
+        self.amount= (7, parser.get_price)
