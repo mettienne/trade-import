@@ -64,7 +64,7 @@ class Importer(daemon.Daemon):
         logger.info('starting entry import')
         self.import_collection(nm.ItemEntry(), self.db.itementries, config.item_entries)
         self.import_collection(nm.CreditorEntry(), self.db.creditorentries, config.creditor_entries)
-        #self.import_collection(nm.DeptorEntry(), self.db.deptorentries, config.deptor_entries)
+        self.import_collection(nm.DeptorEntry(), self.db.deptorentries, config.deptor_entries)
         logger.info('done with entry import')
 
     def salesinvoices(self):
