@@ -22,6 +22,7 @@ item_entries = 'varepost.txt'
 deptor_entries = 'debitorpost.txt'
 creditor_entries = 'kreditorpost.txt'
 bootstrap_path = 'bootstrap'
+accounts = 'finanskonti.txt'
 
 ### DATABASE
 uri = "mongodb://localhost:27017/invoice"

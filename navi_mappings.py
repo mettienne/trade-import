@@ -201,3 +201,13 @@ class CreditorEntry(NaviObject):
         self.type = (3, string)
         self.record_number= (4, to_int)
         self.amount= (7, parser.get_price)
+
+class Account(NaviObject):
+
+    def __init__(self):
+        self.key = (0, string)
+        self.name = (1, string)
+        self.type = (3, string)
+        self.tax_code = (6, string)
+        self.art = (7, string)
+

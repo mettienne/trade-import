@@ -51,6 +51,11 @@ class Importer(object):
                 nm.SalesInvoice(), self.db.salesinvoices, nm.SalesInvCredLine())
         logger.info('done with sales invoice import')
 
+    def accounts(self):
+        logger.info('starting accounts import')
+        self.import_collection(nm.Account(), self.db.accounts, config.accounts)
+        logger.info('done with accounts import')
+
     def purchaseinvoices(self):
         logger.info('starting purchase invoice import')
         self.import_inv_cred(config.purchase_invoice_line, config.purchase_invoice_head,
