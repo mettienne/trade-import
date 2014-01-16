@@ -6,6 +6,7 @@
 import config
 import logging.config
 import os
+import sys
 
 
 def configure(app_id=''):
@@ -34,11 +35,17 @@ def configure(app_id=''):
                 'class': 'logging.handlers.RotatingFileHandler',
                 'filename': file_debug,
                 'formatter': 'verbose'
+            },
+            'stdout': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'stream': sys.stdout,
+                'formatter': 'verbose'
             }
         },
         'loggers': {
             '': {
-                'handlers': ['error_log_file', 'debug_log_file'],
+                'handlers': ['error_log_file', 'debug_log_file', 'stdout'],
                 'propagate': False,
                 'level': 'DEBUG',
             },

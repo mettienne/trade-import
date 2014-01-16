@@ -1,52 +1,30 @@
 import logging
 from  pymongo import MongoClient
-from bson.objectid import ObjectId
-import cPickle as pickle
 import os.path
 import parsing
 import navi_mappings as nm
 import config
-import daemon
-import time
-import signal
-from datetime import datetime, timedelta
-import sys
 import cli
-import subprocess
 
 logger = logging.getLogger(__name__)
 connected = False
 
-class Importer(daemon.Daemon):
+class Importer(object):
 
-    def __init__(self, app_name, *args, **kwargs):
-        try:
+    def __init__(self, app_name):
 
-            def signal_handler(signal, frame):
-                self.close()
-                logger.info('main thread cought exit')
-                sys.exit('exiting')
-
-            signal.signal(signal.SIGTERM, signal_handler)
-
-            daemon.Daemon.__init__(self, app_name, *args, **kwargs)
-
-            self.conn = MongoClient(config.uri)
-            self.db = self.conn.invoice
-            self.parser = parsing.Parser()
-        except Exception as ex:
-            logger.exception(ex)
-            raise
+        self.conn = MongoClient(config.uri)
+        self.db = self.conn.invoice
+        self.parser = parsing.Parser()
 
     def all(self):
         logger.info('starting all')
-        self.rsync()
         self.contacts()
         self.salescreditnotas()
         self.salesinvoices()
         self.purchaseinvoices()
         self.purchasecreditnotas()
-        self.itementries()
+        self.entries()
         logger.info('done with all')
 
     def items(self):
@@ -56,15 +34,15 @@ class Importer(daemon.Daemon):
         def get_boot(name):
             name, ext = name.split('.')
             return os.path.join(config.bootstrap_path, '{}bootstrap.{}'.format(name, ext))
-        #self.speed_import_collection(nm.ItemEntry(), self.db.itementries, get_boot(config.item_entries))
+        self.speed_import_collection(nm.ItemEntry(), self.db.itementries, get_boot(config.item_entries))
         self.speed_import_collection(nm.DeptorEntry(), self.db.deptorentries, get_boot(config.deptor_entries))
-        #self.speed_import_collection(nm.CreditorEntry(), self.db.creditorentries, get_boot(config.creditor_entries))
+        self.speed_import_collection(nm.CreditorEntry(), self.db.creditorentries, get_boot(config.creditor_entries))
 
     def entries(self):
         logger.info('starting entry import')
         self.import_collection(nm.ItemEntry(), self.db.itementries, config.item_entries)
         self.import_collection(nm.CreditorEntry(), self.db.creditorentries, config.creditor_entries)
-        #self.import_collection(nm.DeptorEntry(), self.db.deptorentries, config.deptor_entries)
+        self.import_collection(nm.DeptorEntry(), self.db.deptorentries, config.deptor_entries)
         logger.info('done with entry import')
 
     def salesinvoices(self):
@@ -106,6 +84,9 @@ class Importer(daemon.Daemon):
 
 
     def speed_import_collection(self, element, collection, filename, city_zip=False):
+        """imports data in chunks,
+        expects that the collection is initially empty"""
+
         split = self.parser.parse_file(filename)
         lines = []
         for i, line in enumerate(self.parser.get_lines(split)):
@@ -121,9 +102,6 @@ class Importer(daemon.Daemon):
         if lines:
             collection.insert(lines)
 
-            #collection.update({ 'key': obj.pop('key') },
-                    #{ '$set': obj }, upsert=True)
-
     def import_collection(self, element, collection, filename, city_zip=False):
         split = self.parser.parse_file(filename)
         for i, line in enumerate(self.parser.get_lines(split)):
@@ -133,8 +111,6 @@ class Importer(daemon.Daemon):
             obj = element.format(line, city_zip)
             collection.update({ 'key': obj.pop('key') },
                     { '$set': obj }, upsert=True)
-
-
 
     def import_inv_cred(self, lines_name, heads_filename, element, collection, line_element):
         parsed_lines = self.parser.parse_file(lines_name)
@@ -150,7 +126,6 @@ class Importer(daemon.Daemon):
 
         parsed_heads = self.parser.parse_file(heads_filename)
         self.insert_creditnotas(parsed_heads, result, element, collection)
-
 
     def insert_creditnotas(self, parsed_heads, d_lines, element, collection):
         for i, line in enumerate(self.parser.get_lines(parsed_heads)):
@@ -174,38 +149,6 @@ class Importer(daemon.Daemon):
             collection.update({ 'key': key },
                     { '$set': obj }, upsert=True)
 
-    def rsync(self):
-        logger.info('rsync starting for user {} on host {} to dir {}'.format(config.rsync_user, config.rsync_host, config.rsync_dir))
-        try:
-            out = subprocess.check_output(["rsync", "-vaz", '{}@{}:/export'.format(config.rsync_user, config.rsync_host), '{}'.format(config.rsync_dir)])
-            logger.debug(out)
-        except Exception as ex:
-            logger.exception(ex)
-        logger.info('rsync done')
-
-
-    def close(self):
-        if self.conn:
-            self.conn.close()
-
-
-    def run(self):
-        try:
-            last_run = None
-            while True:
-                now = datetime.now()
-                #run once every hour and only in specified minute interval
-                if now.minute > 30 and now.minute < 45 and (not last_run or now - last_run > timedelta(minutes=30)):
-                    last_run = now
-                    logger.info('Starting sync')
-                    self.all()
-
-                time.sleep(10)
-                logger.info('Sleeping: {}'.format(now))
-
-        except Exception as ex:
-            self.close()
-            logger.exception(ex)
 
 if __name__ == '__main__':
     cli.run('import', Importer)

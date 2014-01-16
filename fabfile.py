@@ -42,7 +42,7 @@ def index():
             'purchasecreditnotas', 'itementries', 'deptorentries', 'creditorentries',
             'items', 'deptors', 'creditors']
     for collection in collections:
-        run('mongo invoice --eval "db.{}.ensureIndex({{ key: 1 }})"'.format(collection))
+        run('mongo invoice --eval "db.{}.ensureIndex({{ key: 1 }}, {{ unique: true }})"'.format(collection))
 
     collections = {
             'salesinvoices': ['name', 'customer_number'],
@@ -110,7 +110,6 @@ def mkdirs():
     run('mkdir -p {}'.format(config.pid_dir))
     run('mkdir -p {}'.format(config.monit_dir))
     run('mkdir -p {}'.format(config.config_dir))
-    #run('mkdir -p {}'.format(os.path.join(env.app_path, config.log_dir)))
 
 def setup_virtualenv():
     """
