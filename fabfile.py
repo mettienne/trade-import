@@ -75,6 +75,10 @@ def dev():
     env.user = 'mikko'
     env.hosts = ['localhost']
 
+def dev2():
+    env.user = 'chris'
+    env.hosts = ['localhost']
+
 def trade():
     env.user = 'nelly'
     env.hosts = ['90.185.144.43']
@@ -114,7 +118,7 @@ def setup_virtualenv():
     Setup a fresh virtualenv.
     """
     print(_yellow('>>> starting {}'.format(_fn())))
-    run('easy_install virtualenv')
+    run('sudo easy_install virtualenv')
     run('virtualenv --no-site-packages {}'.format(env.venv_path))
     run('virtualenv --no-site-packages {}'.format(env.venv_path))
     #virtualenv('easy_install -U setuptools')
