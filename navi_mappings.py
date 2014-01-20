@@ -189,8 +189,9 @@ class DeptorEntry(NaviObject):
         self.deptor_number = (1, string)
         self.date = (2, parser.get_date)
         self.type = (3, string)
-        self.record_number= (4, to_int)
-        self.amount= (7, parser.get_price)
+        self.record_number = (4, to_int)
+        self.amount = (7, parser.get_price)
+        self.posting_group = (16, string)
 
 class CreditorEntry(NaviObject):
 
@@ -199,8 +200,23 @@ class CreditorEntry(NaviObject):
         self.creditor_number = (1, string)
         self.date = (2, parser.get_date)
         self.type = (3, string)
-        self.record_number= (4, to_int)
-        self.amount= (7, parser.get_price)
+        self.record_number = (4, to_int)
+        self.amount = (7, parser.get_price)
+        self.posting_group = (15, string)
+
+
+class FinanceEntry(NaviObject):
+
+    def __init__(self):
+        self.key = (0, parser.get_qty)
+        self.account_number = (1, string)
+        self.date = (2, parser.get_date)
+        self.type = (3, string)
+        self.record_number = (4, to_int)
+        self.text = (5, string)
+        self.tax_code = (6, string)
+        self.offsetting_account = (7, string)
+        self.amount = (8, parser.get_price)
 
 class Account(NaviObject):
 

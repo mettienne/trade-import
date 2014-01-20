@@ -21,6 +21,7 @@ cust_order_numbers = 'kundeordrenumre.txt'
 item_entries = 'varepost.txt'
 deptor_entries = 'debitorpost.txt'
 creditor_entries = 'kreditorpost.txt'
+finance_entries = 'finanspost.txt'
 bootstrap_path = 'bootstrap'
 accounts = 'finanskonti.txt'
 

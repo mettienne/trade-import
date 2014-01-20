@@ -11,7 +11,7 @@ connected = False
 
 class Importer(object):
 
-    def __init__(self, app_name):
+    def __init__(self, app_namerecord_number):
 
         self.conn = MongoClient(config.uri)
         self.db = self.conn.invoice
@@ -37,12 +37,14 @@ class Importer(object):
         self.speed_import_collection(nm.ItemEntry(), self.db.itementries, get_boot(config.item_entries))
         self.speed_import_collection(nm.DeptorEntry(), self.db.deptorentries, get_boot(config.deptor_entries))
         self.speed_import_collection(nm.CreditorEntry(), self.db.creditorentries, get_boot(config.creditor_entries))
+        self.speed_import_collection(nm.FinanceEntry(), self.db.financeentries, get_boot(config.finance_entries))
 
     def entries(self):
         logger.info('starting entry import')
         self.import_collection(nm.ItemEntry(), self.db.itementries, config.item_entries)
         self.import_collection(nm.CreditorEntry(), self.db.creditorentries, config.creditor_entries)
         self.import_collection(nm.DeptorEntry(), self.db.deptorentries, config.deptor_entries)
+        self.import_collection(nm.FinanceEntry(), self.db.financeentries, config.finance_entries)
         logger.info('done with entry import')
 
     def salesinvoices(self):

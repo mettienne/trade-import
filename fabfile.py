@@ -19,7 +19,7 @@ def test():
 
 def itest():
     print(_yellow('>>> starting {}'.format(_fn())))
-    local('py.test -sx --cov-report term-missing --cov . test/itest*.py')
+    local('py.test -s --cov-report term-missing --cov . test/itest*.py')
 
 def clean():
     print(_yellow('>>> starting {}'.format(_fn())))
