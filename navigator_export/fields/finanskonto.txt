@@ -1,0 +1,32 @@
+Nummer
+Navn
+SøgeNavn
+KontoArt
+AfdelingsKode
+ProjektKode
+MomsKode
+Drift/Status
+Debet/Kredit
+Nummer 2
+Bemærkning
+Spærret
+Direkte
+Afstembar
+SideSkift
+Blanke Linier
+Indrykning
+Rettet d.
+DatoAfgrænsning
+AfdelingsAfgrænsning
+ProjektAfgrænsning
+Saldo til dato
+Bevægelse
+Budget
+SammenTælling
+BudgetAfgrænsning
+Saldo
+Budget til dato
+MomsFritaget
+KonsDebetKonto
+KonsKreditKonto
+KoncVirk.Afgrænsning

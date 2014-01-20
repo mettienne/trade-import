@@ -1,0 +1,35 @@
+LøbeNr
+KontoNr
+Dato
+Art
+BilagsNr
+Tekst
+ValutaKode
+Beløb
+RestBeløb
+Orig.Beløb(DKK)
+RestBeløb(DKK)
+DKK
+Køb(DKK)
+Fak.RabatBeløb
+LeverandørNr
+Bogf.Gr
+AfdelingsKode
+ProjektKode
+IndkøberKode
+BrugerID
+Spor
+Afvent
+UdlignArt
+UdlignNr
+Åben
+ForfaldsDato
+Kont.RabatDato
+Kont.Rabat(mulig)
+Kont.Rabat(opnået)
+Positiv
+Lukket af LøbeNr
+Lukket d.
+Lukket med Beløb
+UdligningsID
+EFBeløb(DKK)

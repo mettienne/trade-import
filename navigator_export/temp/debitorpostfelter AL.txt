@@ -1,0 +1,22 @@
+genXYWRITE(1,1,100,FORMAT("L¿beNr") + ':');
+genXYWRITE(2,1,100,FORMAT(KontoNr) + ':');
+genXYWRITE(3,1,100,FORMAT(Dato) + ':');
+genXYWRITE(4,1,100,FORMAT(Art) + ':');
+genXYWRITE(5,1,100,FORMAT(BilagsNr) + ':');
+genXYWRITE(6,1,100,FORMAT(Tekst) + ':');
+genXYWRITE(7,1,100,FORMAT(ValutaKode) + ':');
+genXYWRITE(8,1,100,FORMAT("Bel¿b") + ':');
+genXYWRITE(9,1,100,FORMAT(RestBel¿b) + ':');
+genXYWRITE(10,1,100,FORMAT("Orig.Bel¿b(DKK)") + ':');
+genXYWRITE(11,1,100,FORMAT("RestBel¿b(DKK)") + ':');
+genXYWRITE(12,1,100,FORMAT(DKK) + ':');
+genXYWRITE(13,1,100,FORMAT("Salg(DKK)") + ':');
+genXYWRITE(14,1,100,FORMAT(DB) + ':');
+genXYWRITE(15,1,100,FORMAT("Fak.RabatBel¿b") + ':');
+genXYWRITE(16,1,100,FORMAT(KundeNr) + ':');
+genXYWRITE(17,1,100,FORMAT(Bogf.Gr) + ':');
+genXYWRITE(18,1,100,FORMAT(AfdelingsKode) + ':');
+genXYWRITE(19,1,100,FORMAT(ProjektKode) + ':');
+genXYWRITE(20,1,100,FORMAT("S¾lgerKode") + ':');
+genXYWRITE(21,1,80,  '::');
+
