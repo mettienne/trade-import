@@ -86,4 +86,4 @@ class DS():
 
 
 if __name__ == '__main__':
-    cli.run(__name__, DS)
+    cli.run('edi_ftp', DS)

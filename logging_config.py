@@ -11,7 +11,6 @@ import sys
 
 def configure(app_id=''):
     file_err = os.path.join(config.log_dir, "{}_err.log".format(app_id))
-    file_debug = os.path.join(config.log_dir, "{}_debug.log".format(app_id))
 
     logging.raiseExceptions = False
 
@@ -30,12 +29,6 @@ def configure(app_id=''):
                 'filename': file_err,
                 'formatter': 'verbose'
             },
-            'debug_log_file': {
-                'level': 'DEBUG',
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': file_debug,
-                'formatter': 'verbose'
-            },
             'stdout': {
                 'level': 'DEBUG',
                 'class': 'logging.StreamHandler',
@@ -45,7 +38,7 @@ def configure(app_id=''):
         },
         'loggers': {
             '': {
-                'handlers': ['error_log_file', 'debug_log_file', 'stdout'],
+                'handlers': ['error_log_file', 'stdout'],
                 'propagate': False,
                 'level': 'DEBUG',
             },
