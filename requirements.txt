@@ -1,3 +1,2 @@
-pymongo==2.4.1
+mymongo==2.4.1
 pika==0.9.13
-setproctitle==1.1.8

@@ -91,7 +91,7 @@ def copy():
 def clone():
     with settings(warn_only=True):
         with cd(config.apps_dir):
-            run('git clone -q --depth 1 {} {}'.format(env.git_clone, env.app_name))
+            run('git clone -q --depth 1 {} {} || true'.format(env.git_clone, env.app_name))
 
 def pull():
     print(_yellow('>>> starting {}'.format(_fn())))
