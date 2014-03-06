@@ -20,9 +20,10 @@ class Importer(object):
     def _get_boot(self, name):
         return os.path.join(config.bootstrap_path, name)
 
-    def all(self):
+    def run(self):
         logger.info('starting all')
         self.contacts()
+        self.items()
         self.salescreditnotas()
         self.salesinvoices()
         self.purchaseinvoices()
