@@ -1,2 +1,2 @@
-mymongo==2.4.1
+pymongo==2.4.1
 pika==0.9.13
