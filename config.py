@@ -69,6 +69,7 @@ supergros_password = ''
 
 
 test_edi = True
+use_proxy = False
 
 def configure(config_files):
 

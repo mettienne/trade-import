@@ -64,9 +64,10 @@ class DS():
 
     def send_supergros(self, xml_file):
 
-        logger.info('connecting to proxy')
-        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1", 9999)
-        socket.socket = socks.socksocket
+        if config.use_proxy:
+            logger.info('connecting to proxy')
+            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1", 9999)
+            socket.socket = socks.socksocket
 
         logger.info('ftp-ing ro supergros')
         ftp = ftplib.FTP(config.supergros_server)
