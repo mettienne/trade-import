@@ -6,8 +6,6 @@ module = sys.modules[__name__]
 
 ### IMPORTING
 path = '/export'
-deptor_file = 'debitor.txt'
-creditor_file = 'kreditor.txt'
 item_file = 'vare.txt'
 sales_invoice_line = 'salgsfakturalinie.txt'
 sales_invoice_head = 'salgsfakturahovede.txt'
@@ -34,6 +32,8 @@ rsync_user = 'nelly'
 rsync_host = '90.185.144.43'
 rsync_dir = '/'
 
+superbest_proxy = 'nelly@90.185.144.43'
+
 mongoSSH = "ettienne@ettienne.webfactional.com"
 ssh_timeout = 5
 
@@ -45,8 +45,7 @@ amqp_password = 'guest'
 ### GLOBAL SETTINGS
 
 log_dir = '/apps/log'
-pid_dir = '/apps/pid'
-monit_dir = '/apps/monit'
+supervisor_dir = '/etc/supervisor.d'
 apps_dir = '/apps'
 config_dir = '/apps/config'
 
@@ -62,10 +61,17 @@ cur_dir = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(cur_dir, 'data')
 
 ### DS FTP
-ftp_server = 'ettienne.webfactional.com'
-ftp_user = 'navigator'
-ftp_password = ''
+ds_server = 'ettienne.webfactional.com'
+ds_user = 'navigator'
+ds_password = ''
 
+### supergros FTP
+supergros_server = 'ettienne.webfactional.com'
+supergros_user = 'navigator'
+supergros_password = ''
+
+
+test_edi = True
 
 def configure(config_files):
 

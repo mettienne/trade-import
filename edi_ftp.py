@@ -1,23 +1,25 @@
 import logging_config
-logging_config.configure('edi_ftp')
 import config
 import ftplib
 import json
 import cli
+import uuid
 from utils.amqp import BlockingAMQP
 from utils.export import OIOXML
-from  pymongo import MongoClient
+from utils import export
 import logging
-import daemon
+import socket
+from utils import socks
 logger = logging.getLogger(__name__)
 
 
 
-class DS(daemon.Daemon):
+class DS():
 
     def run(self):
         logger.info('Starting DS amqp handler')
-        self.oio = OIOXML()
+        self.oio = export.OIOXML()
+        self.edi = export.EDI()
         amqp = BlockingAMQP(on_message=self.on_message,
                 host=config.amqp_host,
                 user=config.amqp_user,
@@ -34,33 +36,51 @@ class DS(daemon.Daemon):
 
     def on_message(self, body):
         try:
+            logger.info('recieved message')
             element = json.loads(body)
-            xml_file = self.oio.create_element(element['invoice'], element['deptor'])
-            if not element['dry_run']:
-                self.do_ftp(xml_file, element['invoice']['key'])
+            group = element['deptor'].get('gln_group')
+            if group == 'supergros':
+                xml_file = self.edi.create_element(element['invoice'], element['deptor'], test=element.get('test', False))
+                self.send_supergros(xml_file)
+            elif group == 'dansksupermarked':
+                xml_file = self.oio.create_element(element['invoice'], element['deptor'], test=element.get('test', False))
+                self.send_ds(xml_file)
             else:
-                logger.info('Dry run {}'.format(element))
-            xml_file.close()
+                message = 'GLN-gruppe {} er ukendt'.format(group)
+                return json.dumps({ 'success': False, 'message': message })
 
+            xml_file.close()
             return json.dumps({ 'success': True })
         except Exception as ex:
             logger.exception(ex)
             return json.dumps({ 'success': False, 'message': str(ex) })
 
-    #channel.basic_ack(method.delivery_tag)
-
-    def do_ftp(self, xml_file, number):
-        print config.ftp_server
-        ftp = ftplib.FTP(config.ftp_server)
-        ftp.login(config.ftp_user, config.ftp_password)
-
+    def send_ds(self, xml_file):
+        logger.info('ftp-ing to dansk supermarked')
+        ftp = ftplib.FTP(config.ds_server)
+        ftp.login(config.ds_user, config.ds_password)
         ftp.cwd('invoice')
-        ftp.storbinary('STOR {}.xml'.format(number), xml_file)
-        logging.info('FTP uploaded file: {}'.format(number))
+        self.do_ftp(ftp, xml_file)
+
+    def send_supergros(self, xml_file):
+
+        logger.info('connecting to proxy')
+        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1", 9999)
+        socket.socket = socks.socksocket
+
+        logger.info('ftp-ing ro supergros')
+        ftp = ftplib.FTP(config.supergros_server)
+        ftp.login(config.supergros_user, config.supergros_password)
+        ftp.cwd('PROD/EDISGR/D0901-FROM-EDISGR')
+        self.do_ftp(ftp, xml_file)
+
+    def do_ftp(self, ftp, xml_file):
+        logger.info('Server message: {}'.format(ftp.getwelcome()))
+        name = uuid.uuid1()
+        ftp.storbinary('STOR {}.txt'.format(name), xml_file)
+        logging.info('FTP uploaded file: {}'.format(name))
         ftp.close()
 
+
 if __name__ == '__main__':
-    cli.run('edi_ftp', DS)
-
-
-
+    cli.run(__name__, DS)

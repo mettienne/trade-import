@@ -3,8 +3,26 @@ import os
 import config
 import tempfile
 import xml.etree.ElementTree as etree
+from datetime import datetime
+import time
 
-class OIOXML():
+class Exporter():
+
+    def verify_elem(self, elem, deptor):
+        if not elem['lines']:
+            raise Exception('Ingen vare linier på faktura {}'.format(elem['key']))
+        if not elem['customer_order_number'].strip():
+            #raise Exception('Kundeordrenummer mangler på faktura {}'.format(elem['key']))
+            pass
+        print repr(deptor['gln'])
+        if not deptor['gln'].isdigit():
+            raise Exception('Kunde ean-nummer {} er ikke et tal, faktura {}'.format(deptor['gln'], elem['key']))
+
+    def validate_line(self, i):
+        if not i['ean'].isdigit():
+            raise Exception('Ean-nummer mangler på vare {}'.format(i['item_number']))
+
+class OIOXML(Exporter):
 
     def __init__(self):
 
@@ -61,27 +79,9 @@ class OIOXML():
             </Invoice>
         '''
 
-        self.ean_list = {}
+    def create_element(self, elem, deptor, test):
 
-        # read provided config file from edi
-        # very dansk supermarked specific and to be moved
-        with open(os.path.join(config.data_path, 'butik.csv')) as f:
-            for l in f.readlines():
-                    res = l.split(';')
-                    if len(res) != 10:
-                        print 'warning'
-                    self.ean_list[res[0]] = res[9]
-
-    def create_element(self, elem, edi):
-
-        if elem['customer_order_number'].strip():
-            kundeordrenummer = elem['customer_order_number']
-        else:
-            raise Exception('Kundeordrenummer mangler på faktura {}'.format(elem['key']))
-        if not edi in self.ean_list:
-            raise Exception('Kunde ean-nummer matcher ikke DanskSupermarked på faktura {}'.format(elem['key']))
-
-
+        self.verify_elem(elem, deptor)
         header = etree.fromstring(self.template.encode('utf-8'))
         header.find('ID').text = str(elem['key'])
         posting_date = elem['posting_date']
@@ -90,21 +90,21 @@ class OIOXML():
         else:
             header.find('IssueDate').text = posting_date.isoformat().split('T')[0]
 
-        if 'test' in elem and  elem['test']:
-            header.find('TypeCode').text = 'PIETEST'
+        if test or config.test_edi:
+            pie_type = 'PIETEST'
         else:
-            header.find('TypeCode').text = 'PIE'
+            pie_type = 'PIE'
 
+        header.find('TypeCode').text = pie_type
         #if fak.type == 'faktura':
         #else:
             #header.find('TypeCode').text = 'PCMTEST'
 
-        ean = self.ean_list[edi]
+        ean = deptor['gln']
 
         header.find('BuyerParty').find('ID').text = ean
         header.find('BuyersReferenceID').text = ean
-        header.find('ReferencedOrder').find('BuyersOrderID').text = kundeordrenummer
-
+        header.find('ReferencedOrder').find('BuyersOrderID').text = elem['customer_order_number']
         header.find('SellerParty').find('ID').text = config.trade_ean
         tax = header.find('TaxTotal').find('CategoryTotal').find('TaxAmounts')
 
@@ -114,15 +114,13 @@ class OIOXML():
         for n, i in enumerate(elem['lines']):
             if int(i['total_without_tax'])/100.00 == 0:
                 continue
+            self.validate_line(i)
             item = etree.fromstring(self.i_line)
             item.find('ID').text = str(n+1)
             item.find('InvoicedQuantity').text = str(i['quantity'])
             item.find('LineExtensionAmount').text = "{0:.2f}".format(int(i['total_without_tax'])/100.00)
             item.find('BasePrice').find('PriceAmount').text = "{0:.2f}".format(int(i['price'])/100.00)
-            item_ean = i['ean']
-            if not item_ean.isdigit():
-                raise Exception('Ean-nummer mangler på vare {}'.format(i['item_number']))
-            item.find('Item').find('ID').text = item_ean
+            item.find('Item').find('ID').text = i['ean']
             item.find('Item').find('Description').text = i['info']
             header.append(item)
             total_without_tax += int(i['total_without_tax'])
@@ -142,119 +140,70 @@ class OIOXML():
 
         return temp
 
-class EDIFACT():
+class EDI(Exporter):
 
     def __init__(self):
-        self.ean_list = {}
+        self.additions = 0
 
-    def create_element(self, elem, edi):
-        #imerco_ean = '5790000691104'
-        #shops = open('butiksliste.csv')
-        #x = shops.read().split('\r')
-        #shops.close()
-        #butiksnummer = ''
-
-        #filename = 'print.txt'
-        # filename = 'kredit.txt'
-
-
+    def create_element(self, elem, deptor, test):
+        self.verify_elem(elem, deptor)
+        self.additions = 0
         #betaling = fak.dato + dt.timedelta(days=14)
 
-        if elem['customer_order_number'].strip():
-            kundeordrenummer = elem['customer_order_number']
+        self.i_text = ''
+        def add(text, *args):
+            self.additions += 1
+            self.i_text += text.format(*args) + "'\n"
+
+        supergros_gln = "5790000000852"
+        supergros_inv_reciever = "5790000004072"
+
+        now = datetime.now()
+        uuid = int(time.time())
+        if test or config.test_edi:
+            test = 1 # 1 = test, 0 = prod
         else:
-            raise Exception('Kundeordrenummer mangler på faktura {}'.format(elem['key']))
-        if not edi in self.ean_list:
-            raise Exception('Kunde ean-nummer matcher ikke DanskSupermarked på faktura {}'.format(elem['key']))
+            test = 0
+        add("UNA:+.? ")
+        add("UNB+UNOC:3+{}:14+{}:14+{}:{}+{}++++0++{}", config.trade_ean, supergros_gln, now.strftime('%y%m%d'), now.strftime('%H%M'), uuid, test)
+        add("UNH+{}+INVOIC:D:96A:UN:EAN008", uuid)
+        add("BGM+380+{}+9", elem['key']) #380 faktura, 381 kreditnota
+        print elem['posting_date']
+        add("DTM+137:{}:102", elem['posting_date'].split('T')[0].replace('-', ''))
+        add("RFF+VN:{}", elem['customer_order_number'])
 
-        #1
-        i_text = 'FH~'
-        #2
-        i_text += 'DCABFAK01~'
-        #3
-        i_text += 'F~'
-        #if elem['.type == 'faktura':
-            #i_text += 'F~'
-        #else:
-            #i_text += 'K~'
-        #4
-        i_text += config.trade_ean + '~'
-        #5
-        i_text += edi + '~'
-        #6
-        i_text += elem['key'] + '~'
-        #7
-        i_text += elem['posting_date'].isoformat().split('T')[0] + '~'
-        #8
-        i_text += '~'
-        #9
-        #i_text += betaling.isoformat() + '~'
-        i_text += '' + '~'
-        #10 købers ordrenummer
-        i_text += kundeordrenummer + '~'
-        #11-13
-        i_text += '~~~'
-        #14 følgeseddelnummer
-        #i_text += order_number + '~'
-        i_text += '' + '~'
-        #15-22
-        i_text += '~' * 8
-        #23
-        i_text += config.trade_cvr + '~'
-        #24
-        i_text += str(25) + '~'
-        #25
-        i_text += config.trade_ean + '~'
-        #26-30
-        i_text += '~~~~~'
-        #31
-        i_text += self.ean_list[edi] + '~'
-        #32-37
-        i_text += '~~~~~~'
-        #38-63
-        i_text += '~~~~~~~~~~~~~~~~~~~~~~~~~~'
-
-        items_text = ''
+        add("RFF+AAU:{}", elem['key'])
+        add("DTM+171:{}:102", elem['delivery_date'].split('T')[0].replace('-', ''))
+        add("NAD+BY+{}::9", supergros_inv_reciever)
+        add("NAD+SU+{}::9", config.trade_ean)
+        add("NAD+DP+{}::9", deptor['gln'])
+        add("NAD+IV+{}::9", supergros_gln)
+        add("TAX+7+VAT::9+++:::25+S")
+        add("CUX+2:DKK:4")
         total_without_tax = 0
         total_with_tax = 0
+        line_number = 0
         for n, i in enumerate(elem['lines']):
 
             if int(i['total_without_tax'])/100.00 == 0:
                 continue
-            #1
-            items_text += 'FL~'
-            #2
-            items_text += '~'
-            #3
-            items_text += '~'
-            #4
-            items_text += i['ean'] + '~'
-            if not i['ean'].isdigit():
-                raise Exception('Ean-nummer mangler på vare {}'.format(i['item_number']))
-            #5
-            items_text += i['info'] + '~'
-            #6-11
-            items_text += i.varenr + '~~~~~~'
-            #12
-            items_text += str(i['quantity']) + '~'
-            #13
-            items_text += 'stk~'
-            #14
-            items_text += '1~'
-            #15
-            items_text += '~'
-            #16
-            price = "{0:.2f}".format(int(i['price'])/100.00)
-            items_text += price + '~'
-            #17-26
-            items_text += '~~~~~~~~~~'
-            #27
-            line_total = "{0:.2f}".format(int(i['total_without_tax'])/100.00)
-            items_text += line_total + '~'
-            #28-34
-            items_text += '~~~~~~'
-            items_text += '\r\n'
 
+            try:
+                self.validate_line(i)
+            except:
+                continue
+            line_number += 1
+            add("LIN+{}++{}:EN", line_number, i['ean'])
+
+            add("PIA+1+{}:SA", i['item_number'])
+            #PIA+1+9996:GB' # buyers item group
+            add("IMD+F++:::{}:", i['info'].encode('utf8'))
+
+            add("QTY+47:{}:PK", i['quantity'])
+            line_total = "{0:.2f}".format(int(i['total_without_tax'])/100.00)
+            add("MOA+203:{}", line_total)
+            price = "{0:.2f}".format(int(i['price'])/100.00)
+            add("PRI+AAA:{}", price)
 
             total_without_tax += int(i['total_without_tax'])
             total_with_tax += int(i['total_with_tax'])
@@ -263,28 +212,18 @@ class EDIFACT():
         t_w_t = "{0:.2f}".format(total_with_tax/100.00)
         tax = "{0:.2f}".format((total_with_tax - total_without_tax)/100.00)
 
-        i_text += items_text
-
-        #64
-        i_text += t_wo_t + '~'
-        #65
-        i_text += t_wo_t + '~'
-        #66
-        i_text += tax + '~'
-        #67
-        i_text += t_w_t + '~'
-        #68-77
-        i_text += '~~~~~~~~~'
-
-        i_text
-        k = i_text.split('~')
-        for i, l in enumerate(k):
-            print i+1, l
-
-        print i_text
+        add("UNS+S")
+        add("CNT+2:{}", line_number)
+        add("MOA+79:{}", t_wo_t)
+        add("MOA+86:{}", t_w_t)
+        add("MOA+125:{}", t_wo_t)
+        add("MOA+176:{}", tax)
+        add("TAX+7+VAT::9+++:::25++S")
+        add("UNT+{}+{}", self.additions - 1, uuid)
+        add("UNZ+1+{}", uuid)
 
         temp = tempfile.TemporaryFile()
-        temp.write(i_text)
+        temp.write(self.i_text)
         temp.seek(0)
 
         return temp

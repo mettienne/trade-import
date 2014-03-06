@@ -15,7 +15,7 @@ class BlockingAMQP():
                 parameters=params)
 
         self.channel = self.connection.channel()
-        self.channel.queue_declare(queue="test", durable=True, exclusive=False, auto_delete=False)
+        self.channel.queue_declare(queue="test", durable=False, exclusive=False, auto_delete=True)
 
         self.on_message = on_message
 
@@ -28,10 +28,6 @@ class BlockingAMQP():
         self.channel.stop_consuming()
 
     def _on_message(self, channel, method, props, body):
-        #print "Message:"
-        #print "\t%r" % method
-        #print "\t%r" % header
-        #print "\t%r" % body
 
         # Acknowledge message receipt
         response = ''
@@ -48,9 +44,6 @@ class BlockingAMQP():
                         content_type='application/json'),
                     body=response)
         channel.basic_ack(method.delivery_tag)
-
-        # We've received 10 messages, stop consuming
-        #channel.stop_consuming()
 
 if __name__ == '__main__':
     blocking = BlockingAMQP()

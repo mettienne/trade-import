@@ -38,17 +38,12 @@ def deploy():
     start()
 
 def index():
-    collections = ['salesinvoices', 'salescreditnotas', 'purchaseinvoices',
-            'purchasecreditnotas', 'itementries', 'deptorentries', 'creditorentries',
-            'items', 'deptors', 'creditors']
+    collections = ['sale', 'purchase', 'items', 'deptors', 'creditors']
     for collection in collections:
         run('mongo invoice --eval "db.{}.ensureIndex({{ key: 1 }}, {{ unique: true }})"'.format(collection))
 
     collections = {
-            'salesinvoices': ['name', 'customer_number'],
-            'salescreditnotas': ['name', 'customer_number'],
-            'salesinvoices': ['name', 'customer_number'],
-            'salescreditnotas': ['name', 'customer_number'],
+            'sale': ['name', 'customer_number', 'posting_date', 'type'],
             }
     for col, keys in collections.iteritems():
         for k in keys:
@@ -61,8 +56,8 @@ def log():
 def start():
     print(_yellow('>>> starting {}'.format(_fn())))
     with cd(env.app_path):
-        run('sudo monit reload')
-        run('sudo monit restart edi_ftp')
+        run('sudo supervisorctl reread')
+        run('sudo supervisorctl restart edi_ftp')
 
 def sync():
     print(_yellow('>>> starting {}'.format(_fn())))
@@ -91,7 +86,7 @@ def prod():
 
 def copy():
     with cd(env.app_path):
-        run('cp monit/*monit.conf {}'.format(config.monit_dir))
+        run('cp supervisor/*.conf {}'.format(config.supervisor_dir))
 
 def clone():
     with settings(warn_only=True):
@@ -109,8 +104,6 @@ def mkdirs():
     run('sudo mkdir -p {}'.format(config.apps_dir))
     run('sudo chown {} {}'.format(env.user, config.apps_dir))
     run('mkdir -p {}'.format(config.log_dir))
-    run('mkdir -p {}'.format(config.pid_dir))
-    run('mkdir -p {}'.format(config.monit_dir))
     run('mkdir -p {}'.format(config.config_dir))
 
 def setup_virtualenv():

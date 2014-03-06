@@ -11,11 +11,14 @@ connected = False
 
 class Importer(object):
 
-    def __init__(self, app_namerecord_number):
+    def __init__(self):
 
         self.conn = MongoClient(config.uri)
         self.db = self.conn.invoice
         self.parser = parsing.Parser()
+
+    def _get_boot(self, name):
+        return os.path.join(config.bootstrap_path, name)
 
     def all(self):
         logger.info('starting all')
@@ -30,50 +33,52 @@ class Importer(object):
     def items(self):
         self.import_collection(nm.Item(), self.db.items, config.item_file)
 
-    def bootstrap(self):
-        def get_boot(name):
-            name, ext = name.split('.')
-            return os.path.join(config.bootstrap_path, '{}bootstrap.{}'.format(name, ext))
-        self.speed_import_collection(nm.ItemEntry(), self.db.itementries, get_boot(config.item_entries))
-        self.speed_import_collection(nm.DeptorEntry(), self.db.deptorentries, get_boot(config.deptor_entries))
-        self.speed_import_collection(nm.CreditorEntry(), self.db.creditorentries, get_boot(config.creditor_entries))
-        self.speed_import_collection(nm.FinanceEntry(), self.db.financeentries, get_boot(config.finance_entries))
+    #def bootstrap(self):
+        #self.speed_import_collection(nm.ItemEntry(), self.db.itementries, self._get_boot(config.item_entries))
+        #self.speed_import_collection(nm.DeptorEntry(), self.db.deptorentries, self._get_boot(config.deptor_entries))
+        #self.speed_import_collection(nm.CreditorEntry(), self.db.creditorentries, self._get_boot(config.creditor_entries))
+        #self.speed_import_collection(nm.FinanceEntry(), self.db.financeentries, self._get_boot(config.finance_entries))
 
     def entries(self):
         logger.info('starting entry import')
-        self.import_collection(nm.ItemEntry(), self.db.itementries, config.item_entries)
-        self.import_collection(nm.CreditorEntry(), self.db.creditorentries, config.creditor_entries)
-        self.import_collection(nm.DeptorEntry(), self.db.deptorentries, config.deptor_entries)
-        self.import_collection(nm.FinanceEntry(), self.db.financeentries, config.finance_entries)
+        self.import_entries(nm.ItemEntry(), self.db.sale, config.item_entries, 'record_number', 'item_entries')
+        self.import_entries(nm.CreditorEntry(), self.db.purchase, config.creditor_entries, 'record_number', 'creditor_entries', find_by='creditor_invoice_number')
+        self.import_entries(nm.DeptorEntry(), self.db.sale, config.deptor_entries, 'record_number', 'deptor_entries')
+        #self.import_collection(nm.FinanceEntry(), self.db.financeentries, config.finance_entries)
         logger.info('done with entry import')
-
-    def salesinvoices(self):
-        logger.info('starting sales invoice import')
-        self.import_inv_cred(config.sales_invoice_line, config.sales_invoice_head,
-                nm.SalesInvoice(), self.db.salesinvoices, nm.SalesInvCredLine())
-        logger.info('done with sales invoice import')
 
     def accounts(self):
         logger.info('starting accounts import')
         self.import_collection(nm.Account(), self.db.accounts, config.accounts)
         logger.info('done with accounts import')
 
+
+    def bootstrap_inv(self):
+        self.import_inv_cred(self._get_boot(config.sales_invoice_line), self._get_boot(config.sales_invoice_head),
+                nm.SalesInvoice(), self.db.sale, nm.SalesInvCredLine(), 'invoice')
+
+    def salesinvoices(self):
+        logger.info('starting sales invoice import')
+        self.import_inv_cred(config.sales_invoice_line, config.sales_invoice_head,
+                nm.SalesInvoice(), self.db.sale, nm.SalesInvCredLine(), 'invoice')
+        logger.info('done with sales invoice import')
+
     def purchaseinvoices(self):
         logger.info('starting purchase invoice import')
         self.import_inv_cred(config.purchase_invoice_line, config.purchase_invoice_head,
-                nm.PurchaseInvoice(), self.db.purchaseinvoices, nm.PurchaseInvCredLine())
+                nm.PurchaseInvoice(), self.db.purchase, nm.PurchaseInvCredLine())
         logger.info('done with purchase invoice import')
 
     def salescreditnotas(self):
         logger.info('starting sales creditnota import')
         self.import_inv_cred(config.sales_creditnota_line, config.sales_creditnota_head,
-                nm.SalesCreditnota(), self.db.salescreditnotas, nm.SalesInvCredLine())
+                nm.SalesCreditnota(), self.db.sale, nm.SalesInvCredLine(), 'creditnota')
         logger.info('done with sales creditnota import')
 
     def purchasecreditnotas(self):
         logger.info('starting purchase creditnota import')
         self.import_inv_cred(config.purchase_creditnota_line, config.purchase_creditnota_head,
-                nm.PurchaseCreditnota(), self.db.purchasecreditnotas, nm.PurchaseInvCredLine())
+                nm.PurchaseCreditnota(), self.db.purchase, nm.PurchaseInvCredLine())
         logger.info('done with purchase creditnota import')
 
     def contacts(self):
@@ -119,7 +124,27 @@ class Importer(object):
             collection.update({ 'key': obj.pop('key') },
                     { '$set': obj }, upsert=True)
 
-    def import_inv_cred(self, lines_name, heads_filename, element, collection, line_element):
+
+    def import_entries(self, element, collection, filename, ref, key, find_by='key'):
+        split = self.parser.parse_file(filename)
+        for i, line in enumerate(self.parser.get_lines(split)):
+            if i % 100 == 0:
+                logger.info('progress file {}: {}'.format(filename, i))
+
+            obj = element.format(line, False)
+            if key == 'deptor_entries' or key == 'creditor_entries':
+                obj['entry_number'] = obj.pop('key')
+                find_key = obj.pop(ref)
+                collection.update({find_by: find_key },
+                        #only upsert if we find by key
+                        { '$set': obj }, upsert=find_by==None)
+            else:
+                obj.pop('last_updated')
+                collection.update({find_by: obj[ref] },
+                        #only upsert if we find by key
+                        { '$addToSet': { key: obj }}, upsert=find_by==None)
+
+    def import_inv_cred(self, lines_name, heads_filename, element, collection, line_element, doc_type=None):
         parsed_lines = self.parser.parse_file(lines_name)
         result = {}
 
@@ -132,27 +157,35 @@ class Importer(object):
             result.setdefault(obj.pop('key'), []).append(obj)
 
         parsed_heads = self.parser.parse_file(heads_filename)
-        self.insert_creditnotas(parsed_heads, result, element, collection)
+        self.insert_creditnotas(parsed_heads, result, element, collection, doc_type)
 
-    def insert_creditnotas(self, parsed_heads, d_lines, element, collection):
+    def insert_creditnotas(self, parsed_heads, d_lines, element, collection, doc_type):
         for i, line in enumerate(self.parser.get_lines(parsed_heads)):
             if i % 100 == 0:
                 logger.info('progress file {}: {}'.format('inv/cred', i))
 
             obj = element.format(line, True)
             key = obj.pop('key')
+            if doc_type:
+                obj['type'] = doc_type
             lines = d_lines.get(key, [])
             comments = []
             final_lines = []
+
             for line in lines:
+                # filter out comments
                 if line['quantity'] == 0:
                     if line['info']:
                         comments.append(line['info'])
                 else:
                     final_lines.append(line)
 
-            obj[nm.lines] = final_lines
-            obj[nm.comments] = comments
+            if final_lines:
+                obj[nm.lines] = final_lines
+            else:
+                logger.error('No lines in {}, {}'.format(key, doc_type))
+            if comments:
+                obj[nm.comments] = comments
             collection.update({ 'key': key },
                     { '$set': obj }, upsert=True)
 
