@@ -37,8 +37,14 @@ def bootstrap(ean_file, columns, ean_index, ref_index, deptor_key, group):
 
         logger.info('Total updates for {} from file {}: {}'.format(group, ean_file, updates))
 
-def run():
+def all():
     bootstrap('supergros.csv', 13, 11, 10, 'key', 'supergros')
     bootstrap('butik.csv', 10, 9, 0, 'search_name', 'dansksupermarked')
 
+if __name__ == '__main__':
+    class Mock():
+
+        def run(self):
+            all()
+    cli.run('edi_ftp', Mock)
 
