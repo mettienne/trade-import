@@ -42,6 +42,8 @@ amqp_host = 'localhost'
 amqp_user = 'guest'
 amqp_password = 'guest'
 
+amqp_queue = 'test'
+
 ### GLOBAL SETTINGS
 
 log_dir = '/apps/log'
