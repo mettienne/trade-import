@@ -1,12 +1,11 @@
 import pika
 import logging
-import config
 
 logger = logging.getLogger(__name__)
 
 class BlockingAMQP():
 
-    def __init__(self, on_message=None, host='localhost',
+    def __init__(self, queue, on_message=None, host='localhost',
             user='guest', password='guest'):
         credentials = pika.PlainCredentials(user, password)
         params = pika.connection.ConnectionParameters(
@@ -16,11 +15,11 @@ class BlockingAMQP():
                 parameters=params)
 
         self.channel = self.connection.channel()
-        self.channel.queue_declare(queue=config.amqp_queue, durable=False, exclusive=False, auto_delete=True)
+        self.channel.queue_declare(queue=queue, durable=False, exclusive=False, auto_delete=True)
 
         self.on_message = on_message
 
-        self.channel.basic_consume(self._on_message, queue="test")
+        self.channel.basic_consume(self._on_message, queue=queue)
 
     def start(self):
         self.channel.start_consuming()

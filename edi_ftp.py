@@ -20,7 +20,9 @@ class DS():
         logger.info('Starting DS amqp handler')
         self.oio = export.OIOXML()
         self.edi = export.EDI()
-        amqp = BlockingAMQP(on_message=self.on_message,
+        amqp = BlockingAMQP(
+                config.amqp_queue,
+                on_message=self.on_message,
                 host=config.amqp_host,
                 user=config.amqp_user,
                 password=config.amqp_password)
