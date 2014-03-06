@@ -56,8 +56,7 @@ def log():
 def start():
     print(_yellow('>>> starting {}'.format(_fn())))
     with cd(env.app_path):
-        run('sudo supervisorctl reload')
-        run('sudo supervisorctl restart edi_ftp:*')
+        run('sudo supervisorctl reload && sudo supervisorctl restart edi_ftp_stage:* && sudo supervisorctl restart edi_ftp_prod:*')
 
 def sync():
     print(_yellow('>>> starting {}'.format(_fn())))
