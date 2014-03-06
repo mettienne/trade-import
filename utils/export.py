@@ -115,8 +115,6 @@ class OIOXML(Exporter):
         total_with_tax = 0
 
         for n, i in enumerate(elem['lines']):
-            if int(i['total_without_tax'])/100.00 == 0:
-                continue
             self.validate_line(i)
             item = etree.fromstring(self.i_line)
             item.find('ID').text = str(n+1)
@@ -187,9 +185,6 @@ class EDI(Exporter):
         total_with_tax = 0
         line_number = 0
         for n, i in enumerate(elem['lines']):
-
-            if int(i['total_without_tax'])/100.00 == 0:
-                continue
 
             self.validate_line(i)
             line_number += 1
