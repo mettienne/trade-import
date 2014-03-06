@@ -188,10 +188,7 @@ class EDI(Exporter):
             if int(i['total_without_tax'])/100.00 == 0:
                 continue
 
-            try:
-                self.validate_line(i)
-            except:
-                continue
+            self.validate_line(i)
             line_number += 1
             add("LIN+{}++{}:EN", line_number, i['ean'])
 
