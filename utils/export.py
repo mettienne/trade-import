@@ -19,8 +19,8 @@ class Exporter():
             raise Exception('Kunde ean-nummer {} er ikke et tal, faktura {}'.format(deptor['gln'], elem['key']))
 
     def validate_line(self, i):
-        if not i['ean'].isdigit():
-            raise Exception('Ean-nummer mangler på vare {}'.format(i['item_number']))
+        if not i['gln_number'].isdigit():
+            raise Exception('GLN-nummer mangler på vare {}'.format(i['item_number']))
 
 class OIOXML(Exporter):
 
