@@ -188,7 +188,7 @@ class EDI(Exporter):
 
             self.validate_line(i)
             line_number += 1
-            add("LIN+{}++{}:EN", line_number, i['ean'])
+            add("LIN+{}++{}:EN", line_number, i['gln_number'])
 
             add("PIA+1+{}:SA", i['item_number'])
             #PIA+1+9996:GB' # buyers item group

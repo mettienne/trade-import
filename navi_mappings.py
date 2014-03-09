@@ -87,6 +87,7 @@ class Item(NaviObject):
         self.quantity = (78, parser.get_qty)
         self.ean = (81, string)
         self.group = (108, string)
+        self.gln_number = (135, string)
 
 class SalesInvCredLine(NaviObject):
 
