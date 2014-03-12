@@ -24,6 +24,9 @@ class Exporter():
             raise Exception('GLN-nummer mangler på vare {}'.format(i['item_number']))
         if not gln.isdigit():
             raise Exception('GLN-nummer  på vare {} er ugyldigt'.format(i['item_number']))
+        # note that we round to ignore half cents/oere
+        if round(i['total_without_tax'] * 1.25) != i['total_with_tax']:
+            raise Exception('Inkl. moms er forskellig fra ex. moms. på vare {}'.format(i['item_number']))
 
 class OIOXML(Exporter):
 
