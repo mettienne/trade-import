@@ -122,6 +122,12 @@ class Importer(object):
                 logger.info('progress file {}: {}'.format(filename, i))
 
             obj = element.format(line, city_zip)
+            # special case for contacts to put emails in a list
+            email = obj.pop('email', None)
+            if email:
+                collection.update({ 'key': obj['key'] },
+                    { '$addToSet': {'emails': email } }, upsert=True)
+
             collection.update({ 'key': obj.pop('key') },
                     { '$set': obj }, upsert=True)
 
