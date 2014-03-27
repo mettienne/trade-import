@@ -5,6 +5,8 @@ import tempfile
 import xml.etree.ElementTree as etree
 from datetime import datetime
 import time
+import logging
+logger = logging.getLogger(__name__)
 
 class Exporter():
 
@@ -14,7 +16,6 @@ class Exporter():
         if not elem['customer_order_number'].strip():
             #raise Exception('Kundeordrenummer mangler på faktura {}'.format(elem['key']))
             pass
-        print repr(deptor['gln'])
         if not deptor['gln'].isdigit():
             raise Exception('Kunde ean-nummer {} er ikke et tal, faktura {}'.format(deptor['gln'], elem['key']))
 
@@ -88,6 +89,8 @@ class OIOXML(Exporter):
     def create_element(self, elem, deptor, test):
 
         self.verify_elem(elem, deptor)
+        logger.info('Converting element: {}, {}'.format(elem, deptor))
+
         header = etree.fromstring(self.template.encode('utf-8'))
         header.find('ID').text = str(elem['key'])
         posting_date = elem['posting_date']
@@ -124,7 +127,7 @@ class OIOXML(Exporter):
             item.find('InvoicedQuantity').text = str(i['quantity'])
             item.find('LineExtensionAmount').text = "{0:.2f}".format(int(i['total_without_tax'])/100.00)
             item.find('BasePrice').find('PriceAmount').text = "{0:.2f}".format(int(i['price'])/100.00)
-            item.find('Item').find('ID').text = i['ean']
+            item.find('Item').find('ID').text = i['gln_number']
             item.find('Item').find('Description').text = i['info']
             header.append(item)
             total_without_tax += int(i['total_without_tax'])
@@ -151,6 +154,7 @@ class EDI(Exporter):
 
     def create_element(self, elem, deptor, test):
         self.verify_elem(elem, deptor)
+        logger.info('Converting element: {}, {}'.format(elem, deptor))
         self.additions = 0
         #betaling = fak.dato + dt.timedelta(days=14)
 
@@ -172,7 +176,6 @@ class EDI(Exporter):
         add("UNB+UNOC:3+{}:14+{}:14+{}:{}+{}++++0++{}", config.trade_ean, supergros_gln, now.strftime('%y%m%d'), now.strftime('%H%M'), uuid, test)
         add("UNH+{}+INVOIC:D:96A:UN:EAN008", uuid)
         add("BGM+380+{}+9", elem['key']) #380 faktura, 381 kreditnota
-        print elem['posting_date']
         add("DTM+137:{}:102", elem['posting_date'].split('T')[0].replace('-', ''))
         add("RFF+VN:{}", elem['customer_order_number'])
 
