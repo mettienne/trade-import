@@ -20,7 +20,7 @@ def to_int(string, key):
     try:
         return int(string)
     except:
-        logger.warning('could not get int {}, key {}'.format(string, key))
+        logger.warning('could not get int {}, key {}'.format(repr(string), key))
 
     return 0
 
@@ -87,7 +87,8 @@ class Item(NaviObject):
         self.quantity = (78, parser.get_qty)
         self.ean = (81, string)
         self.group = (108, string)
-        self.gln_number = (135, string)
+        # we do not want to use navi as authoritative here
+        #self.gln_number = (135, string)
 
 class SalesInvCredLine(NaviObject):
 
