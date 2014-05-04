@@ -38,7 +38,7 @@ def deploy():
     start()
 
 def index():
-    collections = ['sale', 'purchase', 'items', 'deptors', 'creditors']
+    collections = ['sale', 'purchase', 'items', 'deptors', 'creditors', 'mailgroups']
     for collection in collections:
         run('mongo invoice --eval "db.{}.ensureIndex({{ key: 1 }}, {{ unique: true }})"'.format(collection))
 

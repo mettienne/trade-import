@@ -42,12 +42,33 @@ class Importer(object):
 
     def entries(self):
         logger.info('starting entry import')
-        self.import_entries(nm.ItemEntry(), self.db.sale, config.item_entries, 'record_number', 'item_entries')
-        self.import_entries(nm.CreditorEntry(), self.db.purchase, config.creditor_entries, 'record_number', 'creditor_entries', find_by='creditor_invoice_number')
-        self.import_entries(nm.DeptorEntry(), self.db.sale, config.deptor_entries, 'record_number', 'deptor_entries')
-        #self.import_collection(nm.FinanceEntry(), self.db.financeentries, config.finance_entries)
+        #self.import_entries(nm.ItemEntry(), self.db.sale, config.item_entries, 'record_number', 'item_entries')
+        #self.import_entries(nm.CreditorEntry(), self.db.purchase, config.creditor_entries, 'record_number', 'creditor_entries', find_by='creditor_invoice_number')
+        #self.import_entries(nm.DeptorEntry(), self.db.sale, config.deptor_entries, 'record_number', 'deptor_entries')
+        self.import_collection(nm.FinanceEntry(), self.db.financeentries, config.finance_entries)
+
         logger.info('done with entry import')
 
+    def import_finance(self):
+        element = nm.FinanceEntry()
+        split = self.parser.parse_file(self._get_boot(config.finance_entries))
+        for i, line in enumerate(self.parser.get_lines(split)):
+            if i % 100 == 0:
+                logger.info('progress file {}: {}'.format(config.finance_entries, i))
+            obj = element.format(line, False)
+            if obj.get('account_number', None) == '1000':
+                #print obj
+                obj.pop('last_updated')
+                res = self.db.sale.update({'key': obj['record_number'] },
+                        { '$addToSet': { 'entries': obj }}, upsert=True)
+                #print res
+            #if key == 'deptor_entries' or key == 'creditor_entries':
+                #obj['entry_number'] = obj.pop('key')
+                #find_key = obj.pop(ref)
+                #collection.update({find_by: find_key },
+                        ##only upsert if we find by key
+                        #{ '$set': obj }, upsert=find_by==None)
+            #else:
     def accounts(self):
         logger.info('starting accounts import')
         self.import_collection(nm.Account(), self.db.accounts, config.accounts)
@@ -126,7 +147,7 @@ class Importer(object):
             email = obj.pop('email', None)
             if email:
                 collection.update({ 'key': obj['key'] },
-                    { '$addToSet': {'emails': email } }, upsert=True)
+                    { '$addToSet': {'primary_emails': email } }, upsert=True)
 
             collection.update({ 'key': obj.pop('key') },
                     { '$set': obj }, upsert=True)
@@ -193,6 +214,10 @@ class Importer(object):
                 logger.error('No lines in {}, {}'.format(key, doc_type))
             if comments:
                 obj[nm.comments] = comments
+
+            if not obj.get('customer_order_number', None):
+                obj.pop('customer_order_number', None)
+
             collection.update({ 'key': key },
                     { '$set': obj }, upsert=True)
 
