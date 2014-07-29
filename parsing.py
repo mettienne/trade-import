@@ -60,12 +60,11 @@ class Parser():
                 l = []
             else:
                 if line[-1] != ':':
-                    raise Exception('Line not properly ended')
+                    raise Exception('Line not properly ended {}'.format(line))
                 l.append(line[:-1])
 
         if last_line != '::':
-            print last_line
-            raise Exception('File not properly ended')
+            raise Exception('File not properly ended line {}, {}'.format(i, last_line))
 
     def get_qty(self, string, key):
         qty = 0

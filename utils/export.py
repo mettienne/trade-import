@@ -86,7 +86,10 @@ class OIOXML(Exporter):
             </Invoice>
         '''
 
-    def create_element(self, elem, deptor, test):
+    def create_element(self, elem, deptor, test, doc_type):
+
+        doc_types = {'invoice': 'PIE', 'creditnota': 'PCM'}
+        assert doc_type in doc_types
 
         self.verify_elem(elem, deptor)
         logger.info('Converting element: {}, {}'.format(elem, deptor))
@@ -99,15 +102,12 @@ class OIOXML(Exporter):
         else:
             header.find('IssueDate').text = posting_date.isoformat().split('T')[0]
 
-        if test or config.test_edi:
-            pie_type = 'PIETEST'
-        else:
-            pie_type = 'PIE'
 
-        header.find('TypeCode').text = pie_type
-        #if fak.type == 'faktura':
-        #else:
-            #header.find('TypeCode').text = 'PCMTEST'
+        oio_doc_type = doc_types[doc_type]
+        if test or config.test_edi:
+            oio_doc_type += 'TEST'
+
+        header.find('TypeCode').text = oio_doc_type
 
         ean = deptor['gln']
 
@@ -152,7 +152,20 @@ class EDI(Exporter):
     def __init__(self):
         self.additions = 0
 
-    def create_element(self, elem, deptor, test):
+    def create_element(self, elem, deptor, test, doc_type):
+
+        doc_types = {
+            'invoice': {
+                'bgm': '380',
+                'dtm': 'delivery_date'
+            },
+            'creditnota': {
+                'bgm': '381',
+                'dtm': 'posting_date'
+            }
+        }
+        assert doc_type in doc_types, 'invalid doc_type'
+
         self.verify_elem(elem, deptor)
         logger.info('Converting element: {}, {}'.format(elem, deptor))
         self.additions = 0
@@ -175,12 +188,12 @@ class EDI(Exporter):
         add("UNA:+.? ")
         add("UNB+UNOC:3+{}:14+{}:14+{}:{}+{}++++0++{}", config.trade_ean, supergros_gln, now.strftime('%y%m%d'), now.strftime('%H%M'), uuid, test)
         add("UNH+{}+INVOIC:D:96A:UN:EAN008", uuid)
-        add("BGM+380+{}+9", elem['key']) #380 faktura, 381 kreditnota
+        add("BGM+{}+{}+9", doc_types[doc_type]['bgm'], elem['key']) #380 faktura, 381 kreditnota
         add("DTM+137:{}:102", elem['posting_date'].split('T')[0].replace('-', ''))
         add("RFF+VN:{}", elem['customer_order_number'])
 
         add("RFF+AAU:{}", elem['key'])
-        add("DTM+171:{}:102", elem['delivery_date'].split('T')[0].replace('-', ''))
+        add("DTM+171:{}:102", elem[doc_types[doc_type]['dtm']].split('T')[0].replace('-', ''))
         add("NAD+BY+{}::9", supergros_inv_reciever)
         add("NAD+SU+{}::9", config.trade_ean)
         add("NAD+DP+{}::9", deptor['gln'])

@@ -42,10 +42,10 @@ class DS():
             element = json.loads(body)
             group = element['deptor'].get('gln_group')
             if group == 'supergros':
-                xml_file = self.edi.create_element(element['invoice'], element['deptor'], test=element.get('test', False))
+                xml_file = self.edi.create_element(element['doc'], element['deptor'], test=element.get('test', False), doc_type=element['doc']['type'])
                 self.send_supergros(xml_file)
             elif group == 'dansksupermarked':
-                xml_file = self.oio.create_element(element['invoice'], element['deptor'], test=element.get('test', False))
+                xml_file = self.oio.create_element(element['doc'], element['deptor'], test=element.get('test', False), doc_type=element['doc']['type'])
                 self.send_ds(xml_file)
             else:
                 message = 'GLN-gruppe {} er ukendt'.format(group)

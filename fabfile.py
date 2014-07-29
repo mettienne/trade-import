@@ -44,10 +44,11 @@ def index():
 
     collections = {
             'sale': ['name', 'customer_number', 'posting_date', 'type'],
+            'sale': ['name', 'customer_number', 'posting_date', 'type', 'lines.item_number'],
             }
     for col, keys in collections.iteritems():
         for k in keys:
-            run('mongo invoice --eval "db.{}.ensureIndex({{ {}: 1 }})"'.format(col, k))
+            run('mongo invoice --eval "db.{}.ensureIndex({{ \'{}\': 1 }})"'.format(col, k))
 
 def log():
     with cd(env.app_path):

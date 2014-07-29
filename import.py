@@ -79,6 +79,10 @@ class Importer(object):
         self.import_inv_cred(self._get_boot(config.sales_invoice_line), self._get_boot(config.sales_invoice_head),
                 nm.SalesInvoice(), self.db.sale, nm.SalesInvCredLine(), 'invoice')
 
+    def bootstrap_cred(self):
+        self.import_inv_cred(self._get_boot(config.sales_creditnota_line), self._get_boot(config.sales_creditnota_head),
+                nm.SalesCreditnota(), self.db.sale, nm.SalesInvCredLine(), 'creditnota')
+
     def salesinvoices(self):
         logger.info('starting sales invoice import')
         self.import_inv_cred(config.sales_invoice_line, config.sales_invoice_head,
@@ -173,6 +177,8 @@ class Importer(object):
                         { '$addToSet': { key: obj }}, upsert=find_by==None)
 
     def import_inv_cred(self, lines_name, heads_filename, element, collection, line_element, doc_type=None):
+        
+        logger.info('handling file {}'.format(lines_name))
         parsed_lines = self.parser.parse_file(lines_name)
         result = {}
 

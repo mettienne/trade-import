@@ -87,6 +87,7 @@ class Item(NaviObject):
         self.quantity = (78, parser.get_qty)
         self.ean = (81, string)
         self.group = (108, string)
+        self.in_stock = (58, string)
         # we do not want to use navi as authoritative here
         #self.gln_number = (135, string)
 
