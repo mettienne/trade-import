@@ -92,7 +92,7 @@ class Importer(object):
     def purchaseinvoices(self):
         logger.info('starting purchase invoice import')
         self.import_inv_cred(config.purchase_invoice_line, config.purchase_invoice_head,
-                nm.PurchaseInvoice(), self.db.purchase, nm.PurchaseInvCredLine())
+                nm.PurchaseInvoice(), self.db.purchase, nm.PurchaseInvCredLine(), 'invoice')
         logger.info('done with purchase invoice import')
 
     def salescreditnotas(self):
@@ -104,7 +104,7 @@ class Importer(object):
     def purchasecreditnotas(self):
         logger.info('starting purchase creditnota import')
         self.import_inv_cred(config.purchase_creditnota_line, config.purchase_creditnota_head,
-                nm.PurchaseCreditnota(), self.db.purchase, nm.PurchaseInvCredLine())
+                nm.PurchaseCreditnota(), self.db.purchase, nm.PurchaseInvCredLine(), 'creditnota')
         logger.info('done with purchase creditnota import')
 
     def contacts(self):

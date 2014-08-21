@@ -128,6 +128,7 @@ class SalesInvoice(NaviObject):
         self.order_date = (17, parser.get_date, {'log': False })
         self.posting_date = (18, parser.get_date, {'log': False})
         self.delivery_date = (19, parser.get_date, {'log': False})
+        self.account = (29, parser.get_posting_group)
         self.total_with_tax = (68, parser.get_price)
         self.edi = (72, string)
         self.customer_order_number = (76, string)
@@ -159,6 +160,7 @@ class SalesCreditnota(NaviObject):
         self.city_zip = (7, string, { 'log': False })
         self.attention = (8, string)
         self.posting_date = (17, parser.get_date)
+        self.account = (23, parser.get_posting_group)
 
 class PurchaseCreditnota(NaviObject):
 

@@ -9,6 +9,17 @@ class MalformedException(Exception):
 
 
 class Parser():
+    def get_posting_group(self, string, key=''):
+        if string == 'V':
+            return '1000'
+        elif string == 'UE':
+            return '1004'
+        elif string == 'E':
+            return '1005'
+        elif string == 'DS':
+            return '1015'
+        else:
+            logger.warning('get_posting_group: unknown group, {}, {}'.format(string, key))
 
     def get_email(self, string, key=''):
         email = string.replace('$', '@')
