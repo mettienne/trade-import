@@ -4,11 +4,13 @@ import os
 import config
 logger = logging.getLogger(__name__)
 
+
 class MalformedException(Exception):
     pass
 
 
 class Parser():
+
     def get_posting_group(self, string, key=''):
         if string == 'V':
             return '1000'
@@ -19,7 +21,10 @@ class Parser():
         elif string == 'DS':
             return '1015'
         else:
-            logger.warning('get_posting_group: unknown group, {}, {}'.format(string, key))
+            logger.warning(
+                'get_posting_group: unknown group, {}, {}'.format(
+                    string,
+                    key))
 
     def get_email(self, string, key=''):
         email = string.replace('$', '@')
@@ -53,7 +58,10 @@ class Parser():
             return (res[0], ' '.join(res[1:]))
         else:
             if log:
-                logger.warning('city_zip: invalid format, {}, {}'.format(key, string.encode('utf8')))
+                logger.warning(
+                    'city_zip: invalid format, {}, {}'.format(
+                        key,
+                        string.encode('utf8')))
             return '', string
 
     def parse_file(self, filename):
@@ -75,16 +83,22 @@ class Parser():
                 l.append(line[:-1])
 
         if last_line != '::':
-            raise Exception('File not properly ended line {}, {}'.format(i, last_line))
+            raise Exception(
+                'File not properly ended line {}, {}'.format(
+                    i,
+                    last_line))
 
     def get_qty(self, string, key):
         qty = 0
         try:
             qty = int(string.replace('.', ''))
         except Exception as e:
-            logger.warning('quantity: invalid format, {}, {}'.format(key, string.encode('utf8')))
+            logger.warning(
+                'quantity: invalid format, {}, {}'.format(
+                    key,
+                    string.encode('utf8')))
 
-        #if qty < 0:
+        # if qty < 0:
             #logger.warning('negative quantity: {}, {}'.format(key, string.encode('utf8')))
 
         return qty
@@ -94,6 +108,8 @@ class Parser():
             return datetime.strptime(string, '%d-%m-%y')
         except:
             if log:
-                logger.warning('date invalid: {}, {}'.format(key, string.encode('utf8')))
-            return ''
-
+                logger.warning(
+                    'date invalid: {}, {}'.format(
+                        key,
+                        string.encode('utf8')))
+            return None

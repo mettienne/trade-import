@@ -1,7 +1,6 @@
 import pytest
 import config
-from  pymongo import MongoClient
-
+from pymongo import MongoClient
 
 
 @pytest.fixture

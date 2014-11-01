@@ -1,16 +1,18 @@
-import parsing
+from . import parsing
 import pytest
 import logging
-import config
+from . import config
 from datetime import datetime
 
 parser = parsing.Parser()
+
 
 def test_get_email(caplog):
     assert parser.get_email('test$test.dk') == 'test@test.dk'
     assert parser.get_email('test@test.dk') == 'test@test.dk'
     parser.get_email('testtest.dk')
     assert 'invalid email' in caplog.text()
+
 
 def test_get_price():
     assert parser.get_price('') == 0
@@ -23,6 +25,7 @@ def test_get_price():
     assert parser.get_price('10.000.000,4') == 1000000040
     assert parser.get_price('10.000.000') == 1000000000
 
+
 def test_parse_file(tmpdir):
     filename = 'foo'
     foo_file = tmpdir.join(filename)
@@ -32,13 +35,15 @@ def test_parse_file(tmpdir):
     config.path = foo_file.dirname
     lines = parser.parse_file(filename)
     assert lines == [u'line1:',
-            u'line2:', u'line3:', u'line4:']
+                     u'line2:', u'line3:', u'line4:']
+
 
 def test_get_lines(tmpdir):
     lines = ['line1:', 'line2:', 'line3:', 'line4:', '::']
     res = list(parser.get_lines(lines))
     assert res == [[u'line1',
-            u'line2', u'line3', u'line4']]
+                    u'line2', u'line3', u'line4']]
+
 
 def test_get_lines_error1(tmpdir):
     lines = ['line1:', 'line2:', 'line3:', 'line4:']
@@ -52,6 +57,7 @@ def test_get_lines_error2(tmpdir):
     with pytest.raises(Exception) as ex:
         lines = list(parser.get_lines(lines))
     assert ex.value.message == 'Line not properly ended'
+
 
 def test_get_city(caplog):
     city = 'Roskilde'
@@ -75,6 +81,7 @@ def test_get_city_warn2(caplog):
     assert 'invalid' in caplog.text()
     assert 'id1' in caplog.text()
 
+
 def test_get_qty(caplog):
     qty = parser.get_qty('123.000', 'id1')
     assert qty == 123000
@@ -84,6 +91,7 @@ def test_get_qty(caplog):
     qty = parser.get_qty('ert', 'id1')
     assert 'invalid format' in caplog.text()
     assert qty == 0
+
 
 def test_get_date(caplog):
     date = parser.get_date('10-12-03', 'id1')

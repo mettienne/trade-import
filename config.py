@@ -4,7 +4,7 @@ import sys
 import logging_config
 module = sys.modules[__name__]
 
-### IMPORTING
+# IMPORTING
 path = '/export'
 item_file = 'vare.txt'
 sales_invoice_line = 'salgsfakturalinie.txt'
@@ -25,10 +25,10 @@ finance_entries = 'finanspost.txt'
 bootstrap_path = 'bootstrap'
 accounts = 'finanskonti.txt'
 
-### DATABASE
+# DATABASE
 uri = "mongodb://localhost:27017/invoice"
 
-### rsync
+# rsync
 
 rsync_user = 'nelly'
 rsync_host = '90.185.144.43'
@@ -39,20 +39,20 @@ superbest_proxy = 'nelly@90.185.144.43'
 mongoSSH = "ettienne@ettienne.webfactional.com"
 ssh_timeout = 5
 
-### AMQP
+# AMQP
 amqp_host = 'localhost'
 amqp_user = 'guest'
 amqp_password = 'guest'
 
 amqp_queue = 'test'
 
-### GLOBAL SETTINGS
+# GLOBAL SETTINGS
 
 log_dir = '/apps/log'
 supervisor_dir = '/etc/supervisor.d'
 apps_dir = '/apps'
 
-### TRADEHOUSE SETTINGS
+# TRADEHOUSE SETTINGS
 
 
 trade_cvr = '26704561'
@@ -61,19 +61,20 @@ trade_ean = '90000' + trade_cvr
 cur_dir = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(cur_dir, 'data')
 
-### DS FTP
+# DS FTP
 ds_server = 'ettienne.webfactional.com'
 ds_user = 'navigator'
-ds_password = ''
+ds_password = 'luxemb0rg'
 
-### supergros FTP
+# supergros FTP
 supergros_server = 'ettienne.webfactional.com'
 supergros_user = 'navigator'
-supergros_password = ''
+supergros_password = 'luxemb0rg'
 
 
 test_edi = True
 use_proxy = False
+
 
 def configure(config_files):
 

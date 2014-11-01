@@ -3,14 +3,15 @@
 @author: Team Processing
 @copyright: Issuu Aps Jun 17, 2013
 '''
-import config
+#from . import config
 import logging.config
 import os
 import sys
 
 
 def configure(app_id=''):
-    file_err = os.path.join(config.log_dir, "{}_err.log".format(app_id))
+    #file_err = os.path.join(config.log_dir, "{}_err.log".format(app_id))
+    file_err = os.path.join('.', "{}_err.log".format(app_id))
 
     logging.raiseExceptions = False
 
@@ -43,6 +44,9 @@ def configure(app_id=''):
                 'level': 'DEBUG',
             },
             'pika': {
+                'level': 'ERROR'
+            },
+            'utils.mysqlcon': {
                 'level': 'ERROR'
             },
         }

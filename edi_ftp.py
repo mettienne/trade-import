@@ -1,8 +1,8 @@
-import logging_config
-import config
+from . import logging_config
+from . import config
 import ftplib
 import json
-import cli
+from . import cli
 import uuid
 from utils.amqp import BlockingAMQP
 from utils.export import OIOXML
@@ -13,7 +13,6 @@ from utils import socks
 logger = logging.getLogger(__name__)
 
 
-
 class DS():
 
     def run(self):
@@ -21,11 +20,11 @@ class DS():
         self.oio = export.OIOXML()
         self.edi = export.EDI()
         amqp = BlockingAMQP(
-                config.amqp_queue,
-                on_message=self.on_message,
-                host=config.amqp_host,
-                user=config.amqp_user,
-                password=config.amqp_password)
+            config.amqp_queue,
+            on_message=self.on_message,
+            host=config.amqp_host,
+            user=config.amqp_user,
+            password=config.amqp_password)
         try:
             amqp.start()
         except (KeyboardInterrupt, SystemExit) as ex:
@@ -34,28 +33,38 @@ class DS():
             logger.exception(ex)
             raise
 
-
-
     def on_message(self, body):
         try:
             logger.info('recieved message')
             element = json.loads(body)
             group = element['deptor'].get('gln_group')
             if group == 'supergros':
-                xml_file = self.edi.create_element(element['doc'], element['deptor'], test=element.get('test', False), doc_type=element['doc']['type'])
+                xml_file = self.edi.create_element(
+                    element['doc'],
+                    element['deptor'],
+                    test=element.get(
+                        'test',
+                        False),
+                    doc_type=element['doc']['type'])
                 self.send_supergros(xml_file)
             elif group == 'dansksupermarked':
-                xml_file = self.oio.create_element(element['doc'], element['deptor'], test=element.get('test', False), doc_type=element['doc']['type'])
+                xml_file = self.oio.create_element(
+                    element['doc'],
+                    element['deptor'],
+                    test=element.get(
+                        'test',
+                        False),
+                    doc_type=element['doc']['type'])
                 self.send_ds(xml_file)
             else:
                 message = 'GLN-gruppe {} er ukendt'.format(group)
-                return json.dumps({ 'success': False, 'message': message })
+                return json.dumps({'success': False, 'message': message})
 
             xml_file.close()
-            return json.dumps({ 'success': True })
+            return json.dumps({'success': True})
         except Exception as ex:
             logger.exception(ex)
-            return json.dumps({ 'success': False, 'message': str(ex) })
+            return json.dumps({'success': False, 'message': str(ex)})
 
     def send_ds(self, xml_file):
         logger.info('ftp-ing to dansk supermarked')
@@ -68,7 +77,7 @@ class DS():
 
         if config.use_proxy:
             logger.info('connecting to proxy')
-            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1", 9999)
+            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9999)
             socket.socket = socks.socksocket
 
         logger.info('ftp-ing ro supergros')
