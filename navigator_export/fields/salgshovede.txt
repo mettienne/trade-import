@@ -22,7 +22,6 @@ Lev.Dato
 Post.Tekst
 BetalingsBet.Kode
 ForfaldsDato
-Kont.Rabat%
 Kont.RabatDato
 LeveringsKode
 LokationsKode
@@ -49,11 +48,9 @@ ModKonto
 SagsNr
 Leveres
 Faktureres
-NettoTotal%
-BruttoTotal%
 Næste LeveranceNr
 Næste FakturaNr
-Sidste LeveranceNrn
+Sidste LeveranceNr
 Sidste FakturaNr
 MomsNr
 SamleFakturering
