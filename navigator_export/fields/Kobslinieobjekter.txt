@@ -14,7 +14,9 @@ Antal
 RestOrdre(antal)
 Faktureres
 Leveres
-Apris KostPris MomsKode
+Apris
+KostPris
+MomsKode
 Moms%
 MængdeRabat%
 Rabat%
